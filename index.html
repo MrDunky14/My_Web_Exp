@@ -6,14 +6,8 @@
     <title>AI/ML Student Portfolio - Slideshow</title>
     <!-- Metadata for SEO -->
     <meta name="description" content="Krishna Singh's AI/ML student portfolio showcasing projects, skills, and contact information with interactive page transitions.">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Remains in head for immediate font loading, with display=swap for FOIT prevention -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- jQuery CDN (used for compatibility, although pure JS preferred where possible) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- GSAP CDNs (for complex animations and timeline control) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSRulePlugin.min.js"></script>
     <style>
         /* Configure Tailwind to use custom colors defined in :root */
         @tailwind base;
@@ -79,11 +73,11 @@
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--color-card-bg);
+            background: var(--color-card-bg); /* Using card-bg for thumb */
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-accent);
+            background: var(--color-accent); /* Using accent for hover */
         }
 
         /* Fade-in animation for content elements within sections */
@@ -91,7 +85,7 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            transition-delay: 0.1s;
+            transition-delay: 0.1s; /* Slight delay for staggered effect */
         }
 
         .fade-in-section.is-visible {
@@ -136,7 +130,7 @@
         /* Hero Section background animation */
         .hero-section-bg {
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* To contain pseudo-element */
         }
         .hero-section-bg::before {
             content: '';
@@ -147,12 +141,16 @@
             height: 100%;
             background-image: radial-gradient(circle, var(--color-primary-bg) 1px, transparent 1px);
             background-size: 20px 20px;
-            opacity: 0.1;
+            opacity: 0.1; /* Subtle opacity */
             animation: backgroundPan 30s linear infinite;
         }
         @keyframes backgroundPan {
-            from { background-position: 0 0; }
-            to { background-position: 200px 200px; }
+            from {
+                background-position: 0 0;
+            }
+            to {
+                background-position: 200px 200px; /* Moves the pattern slowly */
+            }
         }
 
         /* Universal button glow effect on hover */
@@ -512,13 +510,13 @@
         <!-- Hero Section -->
         <section id="hero" class="slideshow-section hero-section-bg bg-gradient-to-r from-[var(--color-secondary-bg)] to-[var(--color-primary-bg)] text-white p-8 md:p-16 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12">
             <div class="flex-shrink-0 hero-animation-img z-10">
-                <img src="image.png" alt="Profile Picture" class="w-48 h-48 rounded-full border-4 border-[var(--color-accent)] shadow-lg object-cover">
+                <img src="image.png" alt="Profile Picture" width="200" height="200" class="w-48 h-48 rounded-full border-4 border-[var(--color-accent)] shadow-lg object-cover">
             </div>
             <div class="text-center md:text-left z-10 content-box-style p-6 md:p-10">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-3 leading-tight hero-animation-text text-[var(--color-accent)]">Hi, I'm Krishna Singh</h1>
                 <p class="text-xl md:text-2xl font-light mb-4 hero-animation-text text-[var(--color-main-text)]">An Aspiring AI/ML Student</p>
                 <p class="text-lg opacity-90 max-w-2xl mx-auto md:mx-0 hero-animation-text text-[var(--color-main-text)]">
-                    Passionate about Machine Learning, Deep Learning, and Data Science. Eager to turn data into insights and build intelligent systems.
+                    Driving innovation through intelligent systems. I'm Krishna Singh, an AI/ML student specializing in Machine Learning, Deep Learning, and Data Science. With a portfolio including impactful projects like 'Deep Earth Sentinel' for environmental sustainability and advanced predictive models for healthcare and customer behavior, I transform complex data into actionable insights to solve real-world challenges.
                 </p>
                 <div class="mt-8 flex justify-center md:justify-start space-x-4 hero-animation-buttons">
                     <!-- Updated buttons to use goToSection function directly -->
@@ -549,7 +547,6 @@
             <!-- This container holds all visible skills content and applies the zoom effect -->
             <div class="flex flex-col items-center w-full h-full content-zoom-out-75">
                 <!-- Heading container for left alignment and specific padding -->
-                <!-- The text-left and px-8 here control the horizontal alignment/padding of the heading itself -->
                 <div class="w-full text-left px-8">
                     <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-accent)] mb-2 fade-in-section">Skills</h2>
                 </div>
@@ -624,7 +621,7 @@
                          data-project-description="&quot;Deep Earth Sentinel&quot; is a deep learning-driven initiative aimed at combating microplastic pollution by accurately identifying the geographical origin of plastic bottle waste. This project develops and deploys a robust Artificial Intelligence model that predicts the scan_country (country of origin) of a plastic bottle based on its product attributes. By precisely pinpointing the source, environmental agencies and policymakers can implement targeted strategies to reduce plastic waste at its origin."
                          data-project-tags="Python,TensorFlow,NLP"
                          data-project-link="https://github.com/MrDunky14/Plastic-Source-Identification-using-DL">
-                        <img src="Project1.png" alt="Project 1 Image" class="w-full h-48 object-cover rounded-t-lg">
+                        <img src="Project1.png" alt="Project 1 Image" width="600" height="400" class="w-full h-48 object-cover rounded-t-lg">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">🌎 Deep Earth Sentinel: AI-Powered Microplastic Pollution Source Identification</h3>
                             <p class="text-[var(--color-main-text)] mb-4 text-sm">
@@ -650,7 +647,7 @@
                          data-project-description="This project presents a robust machine learning model designed for the accurate prediction of human diseases based solely on patient-reported symptoms. Leveraging a comprehensive dataset, this model aims to provide a valuable tool for early diagnosis assistance, potentially streamlining the diagnostic process and improving patient outcomes in healthcare settings."
                          data-project-tags="cuML,Model Interpretion,Machine Learning"
                          data-project-link="https://github.com/MrDunky14/Human-Disease-Prediction-Model">
-                        <img src="Project2.png" alt="Project 2 Image" class="w-full h-48 object-cover rounded-t-lg">
+                        <img src="Project2.png" alt="Project 2 Image" width="600" height="400" class="w-full h-48 object-cover rounded-t-lg">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">Human Disease Prediction Model</h3>
                             <p class="text-[var(--color-main-text)] mb-4 text-sm">
@@ -676,7 +673,7 @@
                          data-project-description="This project presents a comprehensive analysis and predictive modeling solution for customer churn in a telecommunications context. Leveraging a detailed dataset, the primary objective is to accurately identify customers at high risk of churning, understand the underlying drivers of churn, and provide actionable business recommendations to enhance customer retention and maximize Customer Lifetime Value (CLTV)."
                          data-project-tags="scikit-learn,Regression,Data Science"
                          data-project-link="https://github.com/MrDunky14/Predicting-Customer-Churn-An-Advanced-Machine-Learning">
-                        <img src="Project3.png" alt="Project 3 Image" class="w-full h-48 object-cover rounded-t-lg">
+                        <img src="Project3.png" alt="Project 3 Image" width="600" height="400" class="w-full h-48 object-cover rounded-t-lg">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">Predicting Customer Churn: An Advanced Machine Learning</h3>
                             <p class="text-[var(--color-main-text)] mb-4 text-sm">
@@ -702,7 +699,7 @@
                          data-project-description="This space is reserved for a new and exciting project currently under development! Stay tuned for more details on its innovative features and impact."
                          data-project-tags="Coming Soon,AI/ML"
                          data-project-link="#">
-                        <img src="https://placehold.co/600x400/2C394B/00C896?text=Upcoming+Project" alt="Upcoming Project Image" class="w-full h-48 object-cover rounded-t-lg">
+                        <img src="https://placehold.co/600x400/2C394B/00C896?text=Upcoming+Project" alt="Upcoming Project Image" width="600" height="400" class="w-full h-48 object-cover rounded-t-lg">
                         <div class="p-6">
                             <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">🚀 Upcoming Project: [Your Project Title Here]</h3>
                             <p class="text-[var(--color-main-text)] mb-4 text-sm">
@@ -769,7 +766,7 @@
         <div class="project-modal-content">
             <button class="project-modal-close-button" id="closeModalBtn">&times;</button>
             <div class="w-full md:w-1/2 flex-shrink-0"> <!-- Image container -->
-                <img id="modalProjectImage" src="" alt="Project Image" class="w-full h-auto rounded-lg shadow-lg">
+                <img id="modalProjectImage" src="" alt="Project Image" width="600" height="400" class="w-full h-auto rounded-lg shadow-lg">
             </div>
             <div class="w-full md:w-1/2 flex flex-col justify-between"> <!-- Text details container -->
                 <div>
@@ -785,7 +782,14 @@
         </div>
     </div>
 
-
+    <!-- JavaScript files moved to the end of the body for better performance -->
+    <!-- Tailwind CSS CDN (moved from head) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jQuery CDN (moved from head) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <!-- GSAP CDNs (moved from head) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSRulePlugin.min.js"></script>
     <script>
         // Global variables for sections and state management
         const sections = document.querySelectorAll('.slideshow-section');
