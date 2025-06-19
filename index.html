@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI/ML Student Portfolio - Slideshow</title>
+    <!-- Metadata for SEO -->
+    <meta name="description" content="Krishna Singh's AI/ML student portfolio showcasing projects, skills, and contact information with interactive page transitions.">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- jQuery CDN -->
+    <!-- jQuery CDN (used for compatibility, although pure JS preferred where possible) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- GSAP CDNs -->
+    <!-- GSAP CDNs (for complex animations and timeline control) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSRulePlugin.min.js"></script>
     <style>
-        /* Configure Tailwind to use custom colors */
+        /* Configure Tailwind to use custom colors defined in :root */
         @tailwind base;
         @tailwind components;
         @tailwind utilities;
@@ -23,23 +25,29 @@
             --color-primary-bg: #202D3F;    /* Dark Slate Blue - main background, slightly lighter */
             --color-secondary-bg: #2C3E50;  /* Dark Blue-Grey - sections, header, footer */
             --color-card-bg: #34495E;       /* Medium Blue-Grey - cards, subtle lift */
-            --color-main-text: #D0D7E3;     /* Soft Off-White/Light Grey - main body text (kept) */
-            --color-accent: #00C896;        /* Vibrant Teal/Green - headings, buttons, links, highlights (kept) */
+            --color-main-text: #D0D7E3;     /* Soft Off-White/Light Grey - main body text */
+            --color-accent: #00C896;        /* Vibrant Teal/Green - headings, buttons, links, highlights */
         }
 
+        /* Base body styles, disabling overflow for full-page transitions */
         body {
             font-family: 'Inter', sans-serif;
-            font-size: 1.6rem;
-            color: #4089a6;
+            font-size: 1.6rem; /* Base font size, adjusted later by Tailwind */
+            color: #4089a6; /* Default color (consider replacing with Tailwind text-color classes) */
             background-color: var(--color-primary-bg);
             -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Hide overflow to prevent scrollbars during transition */
-            height: 100vh;
-            perspective: 1200px; /* Add perspective for 3D transforms */
-            position: relative;
+            overflow: hidden; /* Crucial for controlling page scrolling during transitions */
+            height: 100vh; /* Ensures body takes full viewport height */
+            perspective: 1200px; /* Adds perspective for potential 3D transforms */
+            position: relative; /* Context for absolute positioned sections */
         }
 
-        /* Elements for screen transition (controlled by GSAP) */
+        /* Class to prevent scrolling on the body when modal is open */
+        body.no-scroll {
+            overflow: hidden;
+        }
+
+        /* Transition overlay elements (controlled by GSAP for screen wipes) */
         .transition-cover-top,
         .transition-cover-bottom {
             content: '';
@@ -47,19 +55,19 @@
             width: 100%;
             position: fixed;
             left: 0;
-            background: #1c2020;
-            z-index: 500;
-            visibility: hidden; /* Controlled by JS */
-            opacity: 0; /* Controlled by JS */
+            background: #1c2020; /* Dark cover color */
+            z-index: 500; /* Above regular content, below modals */
+            visibility: hidden; /* Initially hidden */
+            opacity: 0; /* Initially transparent */
         }
 
         .transition-cover-top {
             top: 0;
-            transform: translateY(-100%);
+            transform: translateY(-100%); /* Start off-screen top */
         }
         .transition-cover-bottom {
             bottom: 0;
-            transform: translateY(100%);
+            transform: translateY(100%); /* Start off-screen bottom */
         }
 
         /* Custom scrollbar for better aesthetics */
@@ -78,7 +86,7 @@
             background: var(--color-accent);
         }
 
-        /* Animation base classes for content within sections */
+        /* Fade-in animation for content elements within sections */
         .fade-in-section {
             opacity: 0;
             transform: translateY(20px);
@@ -125,7 +133,7 @@
             transform: translateY(0);
         }
 
-        /* Hero Section Specific Enhancements (background animation) */
+        /* Hero Section background animation */
         .hero-section-bg {
             position: relative;
             overflow: hidden;
@@ -147,12 +155,12 @@
             to { background-position: 200px 200px; }
         }
 
-        /* Button hover glow effect */
+        /* Universal button glow effect on hover */
         .btn-glow:hover {
             box-shadow: 0 0 10px var(--color-accent), 0 0 20px var(--color-accent), 0 0 30px var(--color-accent);
         }
 
-        /* Card Hover Effect */
+        /* Card hover effect for skills and project tiles */
         .card-hover-effect {
             transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), /* Darker base shadow */
@@ -163,41 +171,38 @@
             transform: translateY(-5px) scale(1.03);
         }
 
-        /* Slideshow Section Styles for Vertical Sliding */
+        /* Full-page slideshow sections for vertical sliding */
         .slideshow-section {
             height: 100vh;
             width: 100vw;
-            position: absolute;
+            position: absolute; /* Allows stacking and movement by GSAP */
             top: 0;
             left: 0;
             opacity: 0;
-            visibility: hidden;
-            transform-style: preserve-3d;
-            transform: translateY(0) rotateX(0deg); /* Default to final state for GSAP */
+            visibility: hidden; /* Hidden by default */
+            transform-style: preserve-3d; /* For potential 3D effects */
+            transform: translateY(0) rotateX(0deg); /* Initial state for GSAP control */
             display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding-top: 6rem;
-            box-sizing: border-box;
-            backface-visibility: hidden;
-            /* No CSS transition here as GSAP will manage the main transitions */
-            transition: opacity 0.8s ease-in-out; /* Keep for content opacity transition if needed */
-            /* Added shadow-type gradient effect */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), /* Stronger, darker base shadow */
-                        0 0 60px rgba(0, 190, 140, 0.2); /* Subtle accent glow/gradient effect */
-            overflow-y: auto; /* Allow vertical scrolling if content overflows */
-            overflow-x: hidden; /* Keep horizontal hidden */
+            align-items: center; /* Centers content horizontally in flex-col */
+            justify-content: center; /* Centers content vertically in flex-col */
+            flex-direction: column; /* Arranges content in a column */
+            padding-top: 6rem; /* Space for fixed navbar */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            backface-visibility: hidden; /* Prevents flickering during 3D transforms */
+            transition: opacity 0.8s ease-in-out; /* Smooth fade for section activation/deactivation */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), /* Section shadow */
+                        0 0 60px rgba(0, 190, 140, 0.2);
+            overflow-y: auto; /* Allows vertical scrolling if content overflows section height */
+            overflow-x: hidden; /* Prevents horizontal scrolling within section */
         }
 
         .slideshow-section.active {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0) rotateX(0deg);
+            transform: translateY(0) rotateX(0deg); /* Active state */
         }
 
-
-        /* Navbar should always be on top */
+        /* Navbar styling: fixed at top, high z-index */
         header {
             position: fixed;
             width: 100%;
@@ -206,15 +211,15 @@
             z-index: 1000;
         }
 
-        /* Navigation dots - Vertical on right */
+        /* Navigation dots for vertical pagination */
         .nav-dots {
             position: fixed;
             right: 20px;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 900; /* Lower than loader */
+            z-index: 900;
             display: flex;
-            flex-direction: column; /* Arrange vertically */
+            flex-direction: column; /* Vertical arrangement */
             gap: 10px;
         }
 
@@ -233,7 +238,7 @@
             transform: scale(1.2);
         }
 
-        /* Loader specific styles (present but currently not used in slide logic) */
+        /* Loader animation styles */
         @keyframes delay {
             0%, 40%, 100% {
                 transform: scaleY(0.05);
@@ -258,7 +263,6 @@
             opacity: 0;
             visibility: hidden;
         }
-
         .loader > div {
             height: 100%;
             width: 8px;
@@ -266,10 +270,10 @@
             float: left;
             margin-left: 2px;
             animation: delay 0.8s infinite ease-in-out;
-            background-color: var(--color-accent); /* Use accent color for loader bars */
+            background-color: var(--color-accent);
         }
 
-        /* General styles, adjusted for palette consistency */
+        /* General heading and main content area styling */
         h1{
             color: var(--color-main-text);
             margin-bottom: 1em;
@@ -281,52 +285,51 @@
             text-align: center;
         }
 
-        /* New style for content boxes within sections */
+        /* Reusable style for content boxes within sections */
         .content-box-style {
-            background-color: var(--color-card-bg); /* Use a slightly lighter background for content boxes */
-            border-radius: 0.75rem; /* Match rounded-xl */
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), /* Darker, more prominent shadow */
-                        0 0 40px rgba(0, 200, 150, 0.15); /* Subtle accent glow */
-            transition: all 0.3s ease-in-out; /* For slight hover effect if desired */
-            transform: translateY(0); /* Ensure no initial Y transform */
+            background-color: var(--color-card-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7),
+                        0 0 40px rgba(0, 200, 150, 0.15);
+            transition: all 0.3s ease-in-out;
+            transform: translateY(0);
         }
-
         .content-box-style:hover {
-            transform: translateY(-3px) scale(1.01); /* Slight lift on hover */
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), /* More intense shadow on hover */
-                        0 0 50px rgba(0, 200, 150, 0.25); /* More intense glow on hover */
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8),
+                        0 0 50px rgba(0, 200, 150, 0.25);
         }
 
-        /* Styles for project carousel */
+        /* Styles for project carousel within the Projects section */
         .projects-carousel-container {
             position: relative;
             width: 100%;
-            max-width: 1200px; /* Adjust as needed */
+            max-width: 1200px; /* Max width for the carousel */
             margin: 0 auto;
-            overflow: hidden; /* Hide projects outside the view */
+            overflow: hidden; /* Hides projects outside the view */
         }
-
         .projects-carousel-track {
-            display: flex;
-            transition: transform 0.5s ease-in-out; /* For JS based sliding */
+            display: flex; /* Horizontal layout of tiles */
+            transition: transform 0.5s ease-in-out; /* Smooth sliding animation */
             will-change: transform; /* Optimize for animation */
         }
-
         .project-tile {
-            flex-shrink: 0; /* Prevent tiles from shrinking */
+            flex-shrink: 0; /* Prevents tiles from shrinking */
             width: 300px; /* Fixed width for each tile */
             margin-right: 24px; /* Gap between tiles */
+            /* Add pointer cursor to indicate clickability */
+            cursor: pointer;
         }
 
-        /* Responsive adjustments for project tiles */
+        /* Responsive adjustments for project tiles within carousel */
         @media (min-width: 768px) { /* md breakpoint */
             .project-tile {
-                width: 350px; /* Larger width on medium screens */
+                width: 350px;
             }
         }
         @media (min-width: 1024px) { /* lg breakpoint */
             .project-tile {
-                width: 380px; /* Even larger on large screens */
+                width: 380px;
             }
         }
 
@@ -343,7 +346,7 @@
             z-index: 10;
             border-radius: 50%;
             font-size: 1.5rem;
-            line-height: 1; /* Adjust to center text vertically */
+            line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -351,20 +354,17 @@
             height: 40px;
             transition: background-color 0.3s ease;
         }
-
         .carousel-nav-button:hover {
             background-color: rgba(0, 0, 0, 0.7);
         }
-
         .carousel-nav-button.left {
             left: 10px;
         }
-
         .carousel-nav-button.right {
             right: 10px;
         }
 
-        /* Project Modal Styles */
+        /* Project Modal Styles (Netflix-like popup) */
         .project-modal-overlay {
             position: fixed;
             top: 0;
@@ -375,47 +375,46 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 2000; /* Above everything else */
+            z-index: 2000; /* Highest z-index to be on top */
             opacity: 0;
-            visibility: hidden;
+            visibility: hidden; /* Hidden by default */
             transition: opacity 0.3s ease;
         }
-
         .project-modal-overlay.open {
             opacity: 1;
             visibility: visible;
         }
-
         .project-modal-content {
             background-color: var(--color-card-bg);
-            border-radius: 1rem; /* Slightly larger rounded corners */
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 80px rgba(0, 200, 150, 0.3); /* More prominent shadow and glow */
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 80px rgba(0, 200, 150, 0.3); /* Shadow and glow */
             padding: 2rem;
-            max-width: 95%;
-            max-height: 95%;
-            overflow-y: auto; /* Scroll if content overflows */
+            max-width: 90%; /* Max width on smaller screens */
+            max-height: 90%; /* Max height on smaller screens */
+            overflow-y: auto; /* Allows scrolling within modal if content overflows */
             position: relative;
-            transform: scale(0.8); /* Start smaller for animation */
+            transform: scale(0.8); /* Start smaller for entry animation */
             opacity: 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
-            display: flex; /* Make it a flex container */
+            display: flex; /* Flex container for two-column layout */
             flex-direction: column; /* Default to column for small screens */
-            gap: 1.5rem; /* Space between image and text section */
+            gap: 1.5rem; /* Space between image and text parts */
         }
 
-        @media (min-width: 768px) { /* Apply row direction for medium and larger screens */
+        /* Responsive adjustment for two-column layout in modal */
+        @media (min-width: 768px) {
             .project-modal-content {
-                flex-direction: row;
-                max-width: 90%; /* Adjust max-width for larger screens if needed */
-                max-height: 90%;
+                flex-direction: row; /* Horizontal layout on medium and larger screens */
+                max-width: 80%; /* Adjust max-width for larger screens */
+                max-height: 80%; /* Adjust max-height for larger screens */
             }
         }
-
         .project-modal-overlay.open .project-modal-content {
-            transform: scale(1);
+            transform: scale(1); /* Scale to full size on open */
             opacity: 1;
         }
 
+        /* Modal close button */
         .project-modal-close-button {
             position: absolute;
             top: 1rem;
@@ -429,28 +428,33 @@
             border-radius: 50%;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
-
         .project-modal-close-button:hover {
             background-color: rgba(255, 255, 255, 0.1);
             color: var(--color-accent);
         }
-
         .project-modal-content img {
-            width: 100%; /* Ensure image takes full width of its container */
+            width: 100%; /* Image takes full width of its container */
             height: auto;
             border-radius: 0.5rem;
-            /* margin-bottom: 1.5rem; Removed as gap on parent handles spacing */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Subtle shadow for modal image */
         }
-	/* New style to zoom out content by 25% */
+
+        /* New style to zoom out content by 25% for Skills section */
         .content-zoom-out-75 {
             transform: scale(0.75);
             transform-origin: center center; /* Ensures it scales from the center */
-            transition: transform 0.3s ease-out; /* Optional: smooth transition for the zoom itself */
+            transition: transform 0.3s ease-out; /* Smooth transition for the zoom itself */
+            display: flex; /* Make it a flex container */
+            flex-direction: column; /* Arrange children in a column */
+            align-items: center; /* Center children horizontally */
+            width: 100%; /* Take full width of its parent */
+            height: 100%; /* Take full height of its parent (important for vertical centering within slide) */
+            justify-content: center; /* Center content vertically within the zoomed area */
         }
     </style>
 </head>
 <body class="antialiased">
-    <!-- Loader HTML -->
+    <!-- Loader HTML (Displayed during page transitions) -->
     <div class="loader">
         <div class="bar1"></div>
         <div class="bar2"></div>
@@ -460,43 +464,45 @@
         <div class="bar6"></div>
     </div>
 
-    <!-- Elements for the screen transition overlay -->
+    <!-- Elements for the screen transition overlay (Controlled by GSAP) -->
     <div class="transition-cover-top"></div>
     <div class="transition-cover-bottom"></div>
 
-    <!-- Navbar -->
+    <!-- Navbar (Fixed at the top) -->
     <header class="bg-[var(--color-secondary-bg)] shadow-md py-2 px-3 md:px-6 rounded-b-lg">
         <nav class="container mx-auto flex justify-between items-center">
-            <!-- Enhanced AI/ML Portfolio Title -->
+            <!-- Portfolio Title (clickable to go to Home) -->
             <a href="#" class="text-xl md:text-2xl font-extrabold text-[var(--color-accent)] p-0.5 rounded-lg transition-all duration-300 transform hover:scale-105 btn-glow border-2 border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-bg)]" data-section-index="0">AI/ML Portfolio</a>
-            <!-- Desktop Navigation -->
+            
+            <!-- Desktop Navigation Links -->
             <ul class="hidden md:flex space-x-2 items-center">
-                <li><a href="#hero" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-xxs md:text-xs" data-section-index="0">Home</a></li>
-                <li><a href="#about" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-xxs md:text-xs" data-section-index="1">About</a></li>
-                <li><a href="#skills" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-xxs md:text-xs" data-section-index="2">Skills</a></li>
-                <li><a href="#projects" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-xxs md:text-xs" data-section-index="3">Projects</a></li>
+                <li><a href="#hero" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="0">Home</a></li>
+                <li><a href="#about" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="1">About</a></li>
+                <li><a href="#skills" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="2">Skills</a></li>
+                <li><a href="#projects" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="3">Projects</a></li>
                 <!-- CTA Button for Contact -->
                 <li>
-                    <a href="#contact" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-xxs md:text-xs" data-section-index="4">Get in Touch</a>
+                    <a href="#contact" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="4">Get in Touch</a>
                 </li>
             </ul>
-            <!-- Mobile Menu Button (Hamburger) -->
+            
+            <!-- Mobile Menu Button (Hamburger Icon) -->
             <button id="mobile-menu-button" class="md:hidden text-[var(--color-main-text)] hover:text-[var(--color-accent)] focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
                 </svg>
             </button>
         </nav>
-        <!-- Mobile Menu (Hidden by default) -->
+        
+        <!-- Mobile Menu (Hidden by default, shown on button click) -->
         <div id="mobile-menu" class="hidden md:hidden mt-4 bg-[var(--color-secondary-bg)] rounded-lg shadow-lg">
             <ul class="flex flex-col items-center py-4 space-y-3">
-                <li><a href="#hero" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-sm md:text-base" data-section-index="0">Home</a></li>
-                <li><a href="#about" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-sm md:text-base" data-section-index="1">About</a></li>
-                <li><a href="#skills" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-sm md:text-base" data-section-index="2">Skills</a></li>
-                <li><a href="#projects" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-sm md:text-base" data-section-index="3">Projects</a></li>
-                <!-- CTA Button for Contact in Mobile Menu -->
+                <li><a href="#hero" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="0">Home</a></li>
+                <li><a href="#about" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="1">About</a></li>
+                <li><a href="#skills" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="2">Skills</a></li>
+                <li><a href="#projects" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="3">Projects</a></li>
                 <li>
-                    <a href="#contact" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow text-sm md:text-base" data-section-index="4">Get in Touch</a>
+                    <a href="#contact" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="4">Get in Touch</a>
                 </li>
             </ul>
         </div>
@@ -508,13 +514,14 @@
             <div class="flex-shrink-0 hero-animation-img z-10">
                 <img src="image.png" alt="Profile Picture" class="w-48 h-48 rounded-full border-4 border-[var(--color-accent)] shadow-lg object-cover">
             </div>
-            <div class="text-center md:text-left z-10 content-box-style p-6 md:p-10"> <!-- Added p-6 md:p-10 -->
+            <div class="text-center md:text-left z-10 content-box-style p-6 md:p-10">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-3 leading-tight hero-animation-text text-[var(--color-accent)]">Hi, I'm Krishna Singh</h1>
                 <p class="text-xl md:text-2xl font-light mb-4 hero-animation-text text-[var(--color-main-text)]">An Aspiring AI/ML Student</p>
                 <p class="text-lg opacity-90 max-w-2xl mx-auto md:mx-0 hero-animation-text text-[var(--color-main-text)]">
                     Passionate about Machine Learning, Deep Learning, and Data Science. Eager to turn data into insights and build intelligent systems.
                 </p>
                 <div class="mt-8 flex justify-center md:justify-start space-x-4 hero-animation-buttons">
+                    <!-- Updated buttons to use goToSection function directly -->
                     <a href="#" onclick="goToSection(3); return false;" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow">View Projects</a>
                     <a href="#" onclick="goToSection(4); return false;" class="bg-transparent text-[var(--color-accent)] font-semibold py-3 px-6 rounded-lg border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-bg)] transition-all duration-300 transform hover:scale-105 btn-glow">Get in Touch</a>
                 </div>
@@ -524,7 +531,7 @@
         <!-- About Me Section -->
         <section id="about" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)]">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-8 fade-in-section">About Me</h2>
-            <div class="prose max-w-3xl mx-auto text-[var(--color-main-text)] leading-relaxed text-lg content-box-style p-6 md:p-10"> <!-- Added p-6 md:p-10 -->
+            <div class="prose max-w-3xl mx-auto text-[var(--color-main-text)] leading-relaxed text-lg content-box-style p-6 md:p-10">
                 <p class="mb-4 fade-in-section">
                     I am a dedicated AI/ML student with a strong foundation in mathematics, statistics, and programming. My journey in artificial intelligence began with a fascination for how machines can learn and adapt, leading me to explore various domains within the field.
                 </p>
@@ -539,59 +546,67 @@
 
         <!-- Skills Section -->
         <section id="skills" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)]">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-2 fade-in-section">Skills</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto content-box-style content-zoom-out-75">
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Programming Languages</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>Python</li>
-                        <li>R</li>
-                        <li>SQL</li>
-                    </ul>
+            <!-- This container holds all visible skills content and applies the zoom effect -->
+            <div class="flex flex-col items-center w-full h-full content-zoom-out-75">
+                <!-- Heading container for left alignment and specific padding -->
+                <!-- The text-left and px-8 here control the horizontal alignment/padding of the heading itself -->
+                <div class="w-full text-left px-8">
+                    <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-accent)] mb-2 fade-in-section">Skills</h2>
                 </div>
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.1s;">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">ML Frameworks & Libraries</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>TensorFlow</li>
-                        <li>PyTorch</li>
-                        <li>scikit-learn</li>
-                        <li>Pandas, NumPy</li>
-                    </ul>
-                </div>
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.2s;">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">AI/ML Concepts</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>Machine Learning</li>
-                        <li>Deep Learning</li>
-                        <li>Natural Language Processing (NLP)</li>
-                        <li>Computer Vision</li>
-                    </ul>
-                </div>
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.3s;">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Tools & Platforms</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>Jupyter Notebooks</li>
-                        <li>Google Colab</li>
-                        <li>Git, GitHub</li>
-                        <li>Docker (Basic)</li>
-                    </ul>
-                </div>
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.4s;">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Databases & Cloud</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>MongoDB</li>
-                        <li>PostgreSQL</li>
-                        <li>AWS (S3, EC2 - Basic)</li>
-                    </ul>
-                </div>
-                <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.5s;">
-                    <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Soft Skills</h3>
-                    <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                        <li>Problem Solving</li>
-                        <li>Critical Thinking</li>
-                        <li>Collaboration</li>
-                        <li>Communication</li>
-                    </ul>
+                <!-- Grid for skill cards, which will center itself with mx-auto -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto content-box-style">
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Programming Languages</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>Python</li>
+                            <li>R</li>
+                            <li>SQL</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.1s;">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">ML Frameworks & Libraries</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>TensorFlow</li>
+                            <li>PyTorch</li>
+                            <li>scikit-learn</li>
+                            <li>Pandas, NumPy</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.2s;">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">AI/ML Concepts</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>Machine Learning</li>
+                            <li>Deep Learning</li>
+                            <li>Natural Language Processing (NLP)</li>
+                            <li>Computer Vision</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.3s;">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Tools & Platforms</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>Jupyter Notebooks</li>
+                            <li>Google Colab</li>
+                            <li>Git, GitHub</li>
+                            <li>Docker (Basic)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.4s;">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Databases & Cloud</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>MongoDB</li>
+                            <li>PostgreSQL</li>
+                            <li>AWS (S3, EC2 - Basic)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.5s;">
+                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Soft Skills</h3>
+                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
+                            <li>Problem Solving</li>
+                            <li>Critical Thinking</li>
+                            <li>Collaboration</li>
+                            <li>Communication</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
@@ -720,7 +735,7 @@
             <p class="text-lg text-[var(--color-main-text)] mb-6 max-w-2xl mx-auto fade-in-section" style="transition-delay: 0.1s;">
                 I'm always open to new opportunities and collaborations. Feel free to reach out to me!
             </p>
-            <div class="flex flex-col items-center space-y-4 fade-in-section content-box-style p-6 md:p-10"> <!-- Added p-6 md:p-10 -->
+            <div class="flex flex-col items-center space-y-4 fade-in-section content-box-style p-6 md:p-10">
                 <a href="mailto:krishnasingh8627@gmail.com" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-opacity-80 transition-colors transform hover:scale-105 inline-flex items-center">
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                     krishnasingh8627@gmail.com
@@ -743,6 +758,11 @@
             </div>
         </section>
     </main>
+
+    <footer class="bg-[var(--color-secondary-bg)] text-[var(--color-main-text)] py-6 text-center rounded-t-xl shadow-lg">
+        <p>&copy; 2024 Krishna Singh. All rights reserved.</p>
+        <p class="mt-2 text-sm">Designed with Tailwind CSS</p>
+    </footer>
 
     <!-- Project Details Modal -->
     <div class="project-modal-overlay" id="projectModal">
@@ -767,36 +787,46 @@
 
 
     <script>
+        // Global variables for sections and state management
         const sections = document.querySelectorAll('.slideshow-section');
         let currentSectionIndex = 0;
-        let isThrottled = false; // To prevent rapid transitions
+        let isThrottled = false; // Prevents rapid transitions
 
-        // Declare these variables at a higher scope
+        // Variables for loader and transition covers (initialized on window.onload)
         let loader;
         let transitionCoverTop;
         let transitionCoverBottom;
 
-
-        // Helper function to animate content elements inside a section
+        /**
+         * Animates content elements into view for the given section.
+         * Applies 'active-content' or 'is-visible' classes to trigger CSS transitions.
+         * @param {HTMLElement} section - The section element whose content needs to be animated.
+         */
         function animateContentIn(section) {
             if (section.id === 'hero') {
+                // Specific animations for Hero section elements
                 section.querySelector('.hero-animation-img')?.classList.add('active-content');
                 const heroContentBox = section.querySelector('.text-center.md\\:text-left.z-10.content-box-style');
                 if (heroContentBox) {
                     heroContentBox.querySelectorAll('.hero-animation-text').forEach(el => el.classList.add('active-content'));
                     heroContentBox.querySelectorAll('.hero-animation-buttons').forEach(el => el.classList.add('active-content'));
                 } else {
+                    // Fallback if content-box-style wrapper is not found (less likely)
                     section.querySelectorAll('.hero-animation-text').forEach(el => el.classList.add('active-content'));
                     section.querySelectorAll('.hero-animation-buttons').forEach(el => el.classList.add('active-content'));
                 }
             } else {
+                // General fade-in for other sections' content
                 section.querySelectorAll('.fade-in-section').forEach(el => {
                     el.classList.add('is-visible');
                 });
             }
         }
 
-        // Helper function to reset content animations for a section
+        /**
+         * Resets content animations for the given section by removing active classes.
+         * @param {HTMLElement} section - The section element whose content animations need to be reset.
+         */
         function resetContentAnimations(section) {
             if (section.id === 'hero') {
                 section.querySelector('.hero-animation-img')?.classList.remove('active-content');
@@ -815,83 +845,97 @@
             }
         }
 
-        // Unified function for ALL slide transitions (using GSAP loader effect)
+        /**
+         * Controls the vertical sliding transition between portfolio sections using GSAP.
+         * Implements a screen wipe effect with a loader.
+         * @param {number} newIndex - The index of the section to navigate to.
+         */
         function goToSection(newIndex) {
+            // Prevent multiple transitions from firing simultaneously
             if (isThrottled) return;
 
             const prevSection = sections[currentSectionIndex];
             let targetIndex = newIndex;
 
-            // Handle looping for newIndex
+            // Loop navigation if newIndex goes out of bounds
             if (newIndex < 0) {
                 targetIndex = sections.length - 1;
             } else if (newIndex >= sections.length) {
                 targetIndex = 0;
             }
-            if (targetIndex === currentSectionIndex) return; // No change needed
 
-            isThrottled = true; // Start throttling for the entire GSAP sequence
+            // If attempting to navigate to the current section, do nothing
+            if (targetIndex === currentSectionIndex) return;
+
+            isThrottled = true; // Engage throttling
 
             const newSection = sections[targetIndex];
 
-            // Reset old section's content animations before it becomes inactive
+            // Reset content animations on the outgoing section immediately
             if (prevSection) {
                 resetContentAnimations(prevSection);
             }
 
+            // Create a GSAP timeline for sequencing animations
             const tl = new TimelineMax({
                 onComplete: () => {
-                    isThrottled = false; // Clear throttling when full GSAP sequence completes
+                    isThrottled = false; // Release throttling when animation completes
 
-                    // Re-enable CSS transition for the new section after GSAP is done
-                    // This is important if you ever decide to re-introduce CSS-based animations
-                    newSection.style.transition = 'opacity 0.8s ease-in-out';
+                    // Ensure previous section is fully hidden and reset its styles
+                    if (prevSection) {
+                        prevSection.classList.remove('active');
+                        prevSection.style.visibility = 'hidden';
+                        prevSection.style.opacity = '0';
+                        prevSection.style.transition = 'none'; // Disable CSS transitions after GSAP
+                        prevSection.style.transform = 'translateY(0) rotateX(0deg)'; // Reset transform
+                    }
 
-                    // Now that the section is visible and transitions are reset, trigger content animations
-                    // A small timeout ensures the browser has time to register the transition property
+                    // Ensure new section is fully active and ready for content animations
+                    newSection.style.transition = 'opacity 0.8s ease-in-out'; // Re-enable CSS transition
                     setTimeout(() => {
-                        animateContentIn(newSection);
-                    }, 50); // Small delay to ensure content animations play correctly
+                        animateContentIn(newSection); // Trigger content specific animations
+                    }, 50); // Small delay for content animations to run after section is fully active
                 }
             });
 
-            // Phase 1: Screen Close (Cover elements slide in)
+            // Phase 1: Screen Close (Transition covers slide in)
             tl.to(transitionCoverTop, 0.2, {top: '50%', ease: Power2.easeOut, onStart: () => {
-                // Make covers visible before they start moving
+                // Make covers visible and opaque before they start moving
                 transitionCoverTop.style.visibility = 'visible';
                 transitionCoverBottom.style.visibility = 'visible';
                 transitionCoverTop.style.opacity = '1';
                 transitionCoverBottom.style.opacity = '1';
 
-                // Instantly hide previous section as cover comes down
+                // Immediately hide the previous section as covers come down
                 if (prevSection) {
                     prevSection.classList.remove('active');
                     prevSection.style.visibility = 'hidden';
                     prevSection.style.opacity = '0';
-                    prevSection.style.transition = 'none'; // CRUCIAL: Disable CSS transition during GSAP control
-                    prevSection.style.transform = 'translateY(0) rotateX(0deg)'; // Reset its transform
+                    prevSection.style.transition = 'none'; // Disable CSS transition for GSAP control
+                    prevSection.style.transform = 'translateY(0) rotateX(0deg)'; // Reset transform
                 }
             }}, 'close')
             .to(transitionCoverBottom, 0.2, {bottom: '50%', ease: Power2.easeOut}, 'close')
 
-            // Phase 2: Loader Fade In & Prepare new section (still under cover)
-            .to(loader, 0.2, {opacity: 1, visibility: 'visible'}, '+=0.1')
+            // Phase 2: Loader Fade In & Prepare new section (under cover)
+            .to(loader, 0.2, {opacity: 1, visibility: 'visible'}, '+=0.1') // Loader appears
             .call(() => {
-                // Instantly show and make active the new section, but still under the cover
+                // Immediately set the new section to active, visible, and in its final position,
+                // but still hidden by the covers. This ensures content is ready when covers recede.
                 newSection.classList.add('active');
                 newSection.style.visibility = 'visible';
                 newSection.style.opacity = '1';
-                newSection.style.transition = 'none'; // CRUCIAL: Disable CSS transition during GSAP control
-                newSection.style.transform = 'translateY(0) rotateX(0deg)'; // Ensure it's in final state immediately
-            }, null, null, '+=0.1') // After loader fades in
+                newSection.style.transition = 'none'; // Disable CSS transition for GSAP control
+                newSection.style.transform = 'translateY(0) rotateX(0deg)'; // Snap to final position
+            }, null, null, '+=0.1') // Runs after loader starts fading in
 
-            // Phase 3: Screen Open & Loader Fade Out (New section content is already in place)
-            tl.to(transitionCoverTop, 0.2, {top: '0%', ease: Power2.easeOut}, '+=0.5')
-            .to(transitionCoverBottom, 0.2, {bottom: '0%', ease: Power2.easeOut}, '-=0.2')
-            .to(loader, 0.2, {opacity: 0, visibility: 'hidden'}, '-=0.2');
+            // Phase 3: Screen Open & Loader Fade Out (New section content is revealed)
+            tl.to(transitionCoverTop, 0.2, {top: '0%', ease: Power2.easeOut}, '+=0.5') // Covers slide back up
+            .to(transitionCoverBottom, 0.2, {bottom: '0%', ease: Power2.easeOut}, '-=0.2') // Covers slide back down
+            .to(loader, 0.2, {opacity: 0, visibility: 'hidden'}, '-=0.2'); // Loader fades out
 
-            currentSectionIndex = targetIndex;
-            updateNavDots();
+            currentSectionIndex = targetIndex; // Update current section index
+            updateNavDots(); // Update navigation dots visual state
         }
 
 
@@ -913,7 +957,7 @@
             }
         });
 
-        // Mobile menu toggle
+        // Mobile menu toggle functionality
         document.getElementById('mobile-menu-button').addEventListener('click', function() {
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenu.classList.toggle('hidden');
@@ -930,11 +974,14 @@
             dot.classList.add('nav-dot');
             dot.setAttribute('data-section-index', index);
             dot.addEventListener('click', () => {
-                goToSection(index); // Use unified transition for dot clicks
+                goToSection(index); // Navigate to section on dot click
             });
             navDotsContainer.appendChild(dot);
         });
 
+        /**
+         * Updates the active state of navigation dots based on the current section.
+         */
         function updateNavDots() {
             document.querySelectorAll('.nav-dot').forEach((dot, index) => {
                 if (index === currentSectionIndex) {
@@ -950,82 +997,94 @@
             link.addEventListener('click', function(e) {
                 e.preventDefault(); // Prevent default hash behavior
                 const index = parseInt(this.getAttribute('data-section-index'));
-                goToSection(index); // Use unified transition for header clicks
+                goToSection(index); // Navigate to section on link click
             });
         });
 
-        // Update mobile menu links to directly navigate sections
+        // Update mobile menu links to directly navigate sections and close menu
         document.querySelectorAll('#mobile-menu a').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const index = parseInt(this.getAttribute('data-section-index'));
-                goToSection(index); // Use unified transition for mobile menu clicks
-                // Close mobile menu after clicking
+                goToSection(index); // Navigate to section
+                // Close mobile menu after clicking a link
                 document.getElementById('mobile-menu').classList.add('hidden');
                 document.getElementById('mobile-menu').classList.remove('flex');
             });
         });
 
-        // Project Carousel Logic
+        // Project Carousel Logic within the Projects section
         let projectCarouselTrack;
         let projectTiles;
         let currentProjectIndex = 0;
-        let projectsPerPage = 1; // Default for smaller screens, adjust later
+        let projectsPerPage = 1; // Default for smaller screens, adjusted responsively
 
+        /**
+         * Calculates how many project tiles can fit on the screen based on current viewport width.
+         */
         function updateProjectsPerPage() {
-            if (!projectTiles || projectTiles.length === 0) return; // Prevent errors if tiles aren't loaded
+            if (!projectTiles || projectTiles.length === 0) return;
 
             const containerWidth = projectCarouselTrack.parentElement.clientWidth;
-            // Ensure tileWidth calculation is robust
+            // Calculate actual tile width including margins for accurate measurement
             const tileStyle = getComputedStyle(projectTiles[0]);
             const tileWidth = projectTiles[0].offsetWidth +
                              parseFloat(tileStyle.marginRight) +
-                             parseFloat(tileStyle.marginLeft); // Include margins for accurate width
+                             parseFloat(tileStyle.marginLeft);
 
             projectsPerPage = Math.floor(containerWidth / tileWidth);
-            if (projectsPerPage === 0) projectsPerPage = 1; // Ensure at least one project is shown
+            if (projectsPerPage === 0) projectsPerPage = 1; // Ensure at least one project is always shown
 
-            // Limit currentProjectIndex to valid range after calculating projectsPerPage
+            // Adjust currentProjectIndex to stay within valid bounds after resize
             currentProjectIndex = Math.max(0, Math.min(currentProjectIndex, projectTiles.length - projectsPerPage));
         }
 
+        /**
+         * Slides the project carousel to display a specific set of projects.
+         * @param {number} index - The starting index of the project to display.
+         */
         function showProjects(index) {
+            // Ensure index is within valid range
             currentProjectIndex = Math.max(0, Math.min(index, projectTiles.length - projectsPerPage));
-            // Recalculate tileWidth here to ensure responsiveness in case of window resize before slide
+            
+            // Recalculate tile width with margin for precise offset
             const tileStyle = getComputedStyle(projectTiles[0]);
             const tileWidthWithMargin = projectTiles[0].offsetWidth +
                                         parseFloat(tileStyle.marginRight) +
                                         parseFloat(tileStyle.marginLeft);
             const offset = -currentProjectIndex * tileWidthWithMargin;
+            
+            // Animate carousel track using GSAP
             TweenMax.to(projectCarouselTrack, 0.5, { x: offset, ease: Power2.easeOut });
         }
 
+        // Initialize project carousel on DOM content loaded
         document.addEventListener('DOMContentLoaded', () => {
             projectCarouselTrack = document.getElementById('projects-carousel-track');
             projectTiles = document.querySelectorAll('.project-tile');
 
             if (projectCarouselTrack && projectTiles.length > 0) {
-                updateProjectsPerPage(); // Calculate on load
-                showProjects(0); // Show first projects
+                updateProjectsPerPage(); // Initial calculation
+                showProjects(0); // Show first set of projects
 
-                // Resize observer to update projectsPerPage if container size changes
+                // Use ResizeObserver for responsive carousel recalculations
                 const resizeObserver = new ResizeObserver(() => {
                     updateProjectsPerPage();
-                    showProjects(currentProjectIndex); // Recalculate and re-position
+                    showProjects(currentProjectIndex); // Re-position carousel based on new size
                 });
-                resizeObserver.observe(projectCarouselTrack.parentElement); // Observe the container
+                resizeObserver.observe(projectCarouselTrack.parentElement); // Observe the carousel container
 
+                // Event listeners for carousel navigation buttons
                 document.getElementById('nextProjectBtn').addEventListener('click', () => {
                     showProjects(currentProjectIndex + projectsPerPage);
                 });
-
                 document.getElementById('prevProjectBtn').addEventListener('click', () => {
                     showProjects(currentProjectIndex - projectsPerPage);
                 });
             }
         });
 
-        // Project Modal Handling
+        // Project Modal Handling (for displaying full project details)
         const projectModal = document.getElementById('projectModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const modalProjectImage = document.getElementById('modalProjectImage');
@@ -1034,19 +1093,20 @@
         const modalProjectTags = document.getElementById('modalProjectTags');
         const modalProjectLink = document.getElementById('modalProjectLink');
 
+        // Add click listener to each project tile to open the modal
         document.querySelectorAll('.project-tile').forEach(tile => {
             tile.addEventListener('click', function(event) {
-                // Prevent opening modal if clicking the "View Project" link inside the tile
+                // Prevent modal from opening if a link INSIDE the tile is clicked
                 if (event.target.tagName === 'A' || event.target.closest('a')) {
                     return;
                 }
+                // Populate modal content from data attributes on the tile
                 modalProjectImage.src = this.dataset.projectImg;
                 modalProjectTitle.textContent = this.dataset.projectTitle;
                 modalProjectDescription.textContent = this.dataset.projectDescription;
 
-                // Clear previous tags
+                // Clear existing tags and add new ones
                 modalProjectTags.innerHTML = '';
-                // Add new tags
                 this.dataset.projectTags.split(',').forEach(tagText => {
                     const span = document.createElement('span');
                     span.classList.add('bg-[var(--color-secondary-bg)]', 'text-[var(--color-accent)]', 'text-xs', 'font-semibold', 'px-2.5', 'py-0.5', 'rounded-full');
@@ -1055,18 +1115,22 @@
                 });
                 modalProjectLink.href = this.dataset.projectLink;
 
-                projectModal.classList.add('open');
+                projectModal.classList.add('open'); // Open the modal
+                document.body.classList.add('no-scroll'); // Disable body scrolling
             });
         });
 
+        // Close modal when close button is clicked
         closeModalBtn.addEventListener('click', () => {
-            projectModal.classList.remove('open');
+            projectModal.classList.remove('open'); // Close the modal
+            document.body.classList.remove('no-scroll'); // Re-enable body scrolling
         });
 
-        // Close modal when clicking outside content
+        // Close modal when clicking outside the content area (on the overlay)
         projectModal.addEventListener('click', (event) => {
-            if (event.target === projectModal) {
+            if (event.target === projectModal) { // Check if the click was directly on the overlay
                 projectModal.classList.remove('open');
+                document.body.classList.remove('no-scroll');
             }
         });
 
@@ -1074,40 +1138,46 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && projectModal.classList.contains('open')) {
                 projectModal.classList.remove('open');
+                document.body.classList.remove('no-scroll');
             }
         });
 
 
-        // Initial load: show the first section and trigger its content animations directly
+        /**
+         * Initializes the portfolio on window load.
+         * Sets initial section visibility, animates hero content, and updates nav dots.
+         */
         window.onload = () => {
-            // Initialize jQuery and GSAP-related variables here, after libraries are loaded
-            loader = $('.loader');
+            // Initialize global variables for loader and transition covers
+            loader = document.querySelector('.loader'); // Corrected to use vanilla JS querySelector
             transitionCoverTop = document.querySelector('.transition-cover-top');
             transitionCoverBottom = document.querySelector('.transition-cover-bottom');
 
-            // Ensure all sections are initially hidden and reset their transforms
+            // Ensure all sections are initially hidden and reset for GSAP control
             sections.forEach(section => {
                 section.style.visibility = 'hidden';
                 section.style.opacity = '0';
-                section.style.transform = 'translateY(0) rotateX(0deg)'; // Start at final position for GSAP
-                section.style.transition = 'none'; // Ensure no initial CSS transition on load
+                section.style.transform = 'translateY(0) rotateX(0deg)'; // Set to final state for GSAP
+                section.style.transition = 'none'; // Disable CSS transition to avoid conflicts with GSAP
             });
 
-            // Make the first section active and visible instantly
+            // Make the first section (Hero) active and visible instantly on load
             currentSectionIndex = 0;
             sections[0].classList.add('active');
             sections[0].style.visibility = 'visible';
             sections[0].style.opacity = '1';
             sections[0].style.transform = 'translateY(0) rotateX(0deg)';
             
-            // Trigger content animations for the initially loaded hero section
+            // Trigger content animations for the initial Hero section
             animateContentIn(sections[0]);
 
+            // Update navigation dots to reflect the active section
             updateNavDots();
 
-            // Re-enable transition for the first section so it's ready for next transitions
+            // Re-enable CSS transition for the first section after initial load,
+            // so subsequent opacity transitions work correctly outside of GSAP's control.
             setTimeout(() => {
-                sections[0].style.transition = 'opacity 0.8s ease-in-out'; // Simplified transition for content
+                sections[0].style.transition = 'opacity 0.8s ease-in-out';
             }, 100);
         };
     </script>
