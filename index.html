@@ -3,1183 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI/ML Student Portfolio - Slideshow</title>
-    <!-- Metadata for SEO -->
-    <meta name="description" content="Krishna Singh's AI/ML student portfolio showcasing projects, skills, and contact information with interactive page transitions.">
-    <!-- Tailwind CSS CDN -->
+    <title>A Heartfelt Apology</title>
+    <!-- Tailwind CSS CDN for modern styling and responsiveness -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- jQuery CDN (used for compatibility, although pure JS preferred where possible) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <!-- GSAP CDNs (for complex animations and timeline control) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/plugins/CSSRulePlugin.min.js"></script>
     <style>
-        /* Configure Tailwind to use custom colors defined in :root */
-        @tailwind base;
-        @tailwind components;
-        @tailwind utilities;
+        /* Import Google Font - Inter for a clean, modern look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        :root {
-            /* Refined Professional Dark Palette (Softer Blues/Greys, Tech-focused) */
-            --color-primary-bg: #202D3F;    /* Dark Slate Blue - main background, slightly lighter */
-            --color-secondary-bg: #2C3E50;  /* Dark Blue-Grey - sections, header, footer */
-            --color-card-bg: #34495E;       /* Medium Blue-Grey - cards, subtle lift */
-            --color-main-text: #D0D7E3;     /* Soft Off-White/Light Grey - main body text */
-            --color-accent: #00C896;        /* Vibrant Teal/Green - headings, buttons, links, highlights */
-        }
-
-        /* Base body styles, disabling overflow for full-page transitions */
+        /* Base styles for the body, setting font, background, and centering content */
         body {
             font-family: 'Inter', sans-serif;
-            font-size: 1.6rem; /* Base font size, adjusted later by Tailwind */
-            color: #4089a6; /* Default color (consider replacing with Tailwind text-color classes) */
-            background-color: var(--color-primary-bg);
-            -webkit-font-smoothing: antialiased;
-            overflow: hidden; /* Crucial for controlling page scrolling during transitions */
-            height: 100vh; /* Ensures body takes full viewport height */
-            perspective: 1200px; /* Adds perspective for potential 3D transforms */
-            position: relative; /* Context for absolute positioned sections */
-        }
-
-        /* Class to prevent scrolling on the body when modal is open */
-        body.no-scroll {
-            overflow: hidden;
-        }
-
-        /* Transition overlay elements (controlled by GSAP for screen wipes) */
-        .transition-cover-top,
-        .transition-cover-bottom {
-            content: '';
-            height: 50vh;
-            width: 100%;
-            position: fixed;
-            left: 0;
-            background: #1c2020; /* Dark cover color */
-            z-index: 500; /* Above regular content, below modals */
-            visibility: hidden; /* Initially hidden */
-            opacity: 0; /* Initially transparent */
-        }
-
-        .transition-cover-top {
-            top: 0;
-            transform: translateY(-100%); /* Start off-screen top */
-        }
-        .transition-cover-bottom {
-            bottom: 0;
-            transform: translateY(100%); /* Start off-screen bottom */
-        }
-
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--color-secondary-bg);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--color-card-bg);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--color-accent);
-        }
-
-        /* Fade-in animation for content elements within sections */
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-            transition-delay: 0.1s;
-        }
-
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Specific animations for elements within Hero section */
-        .hero-animation-img {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-            transition-delay: 0.3s;
-        }
-        .hero-animation-img.active-content {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .hero-animation-text {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-            transition-delay: 0.5s;
-        }
-        .hero-animation-text.active-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .hero-animation-buttons {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-            transition-delay: 0.7s;
-        }
-        .hero-animation-buttons.active-content {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Hero Section background animation */
-        .hero-section-bg {
-            position: relative;
-            overflow: hidden;
-        }
-        .hero-section-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: radial-gradient(circle, var(--color-primary-bg) 1px, transparent 1px);
-            background-size: 20px 20px;
-            opacity: 0.1;
-            animation: backgroundPan 30s linear infinite;
-        }
-        @keyframes backgroundPan {
-            from { background-position: 0 0; }
-            to { background-position: 200px 200px; }
-        }
-
-        /* Universal button glow effect on hover */
-        .btn-glow:hover {
-            box-shadow: 0 0 10px var(--color-accent), 0 0 20px var(--color-accent), 0 0 30px var(--color-accent);
-        }
-
-        /* Card hover effect for skills and project tiles */
-        .card-hover-effect {
-            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), /* Darker base shadow */
-                        0 0 25px rgba(0, 200, 150, 0.1); /* Subtle accent glow */
-        }
-        .card-hover-effect:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 200, 150, 0.2);
-            transform: translateY(-5px) scale(1.03);
-        }
-
-        /* Full-page slideshow sections for vertical sliding */
-        .slideshow-section {
-            height: 100vh;
-            width: 100vw;
-            position: absolute; /* Allows stacking and movement by GSAP */
-            top: 0;
-            left: 0;
-            opacity: 0;
-            visibility: hidden; /* Hidden by default */
-            transform-style: preserve-3d; /* For potential 3D effects */
-            transform: translateY(0) rotateX(0deg); /* Initial state for GSAP control */
+            background: linear-gradient(135deg, #E8E7AB 0%, #F2AE66 100%);
             display: flex;
-            align-items: center; /* Centers content horizontally in flex-col */
-            justify-content: center; /* Centers content vertically in flex-col */
-            flex-direction: column; /* Arranges content in a column */
-            padding-top: 6rem; /* Space for fixed navbar */
-            box-sizing: border-box; /* Include padding in element's total width and height */
-            backface-visibility: hidden; /* Prevents flickering during 3D transforms */
-            transition: opacity 0.8s ease-in-out; /* Smooth fade for section activation/deactivation */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), /* Section shadow */
-                        0 0 60px rgba(0, 190, 140, 0.2);
-            overflow-y: auto; /* Allows vertical scrolling if content overflows section height */
-            overflow-x: hidden; /* Prevents horizontal scrolling within section */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem; /* Add padding for small screens */
+            color: #334155;
+            position: relative; 
+            overflow: hidden; /* Prevent scrollbars */
+            box-sizing: border-box;
         }
-
-        .slideshow-section.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) rotateX(0deg); /* Active state */
-        }
-
-        /* Navbar styling: fixed at top, high z-index */
-        header {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-
-        /* Navigation dots for vertical pagination */
-        .nav-dots {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 900;
-            display: flex;
-            flex-direction: column; /* Vertical arrangement */
-            gap: 10px;
-        }
-
-        .nav-dot {
-            width: 12px;
-            height: 12px;
-            background-color: var(--color-card-bg);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            border: 1px solid var(--color-accent);
-        }
-
-        .nav-dot.active {
-            background-color: var(--color-accent);
-            transform: scale(1.2);
-        }
-
-        /* Loader animation styles */
-        @keyframes delay {
-            0%, 40%, 100% {
-                transform: scaleY(0.05);
-                -webkit-transform: scaleY(0.05);
-            }
-            20% {
-                transform: scaleY(1.0);
-                -webkit-transform: scaleY(1.0);
-            }
-        }
-        .loader {
-            margin: 0 auto;
-            width: 60px;
-            height: 50px;
-            text-align: center;
-            font-size: 10px;
+        
+        /* --- MOBILE-FRIENDLY & MORE VISIBLE BACKGROUND FLOWERS --- */
+        .background-flower {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translateY(-50%) translateX(-50%);
-            z-index: 600;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .loader > div {
-            height: 100%;
-            width: 8px;
-            display: inline-block;
-            float: left;
-            margin-left: 2px;
-            animation: delay 0.8s infinite ease-in-out;
-            background-color: var(--color-accent);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.25; /* Made more visible */
+            transition: transform 0.5s, opacity 0.5s;
         }
 
-        /* General heading and main content area styling */
-        h1{
-            color: var(--color-main-text);
-            margin-bottom: 1em;
-            font-size: 2.2rem;
-            font-weight: 100;
+        /* Top-left vine: Smaller and positioned for mobile */
+        #flower-vine-tl {
+            top: -5%;
+            left: -15%;
+            width: 60vw; /* Use viewport width for scaling */
+            max-width: 300px;
+            transform: rotate(15deg);
         }
-        main {
-            height: 100vh;
+
+        /* Bottom-right rose: Smaller and positioned for mobile */
+        #flower-rose-br {
+            bottom: -5%;
+            right: -15%;
+            width: 50vw; /* Use viewport width for scaling */
+            max-width: 250px;
+            transform: rotate(-20deg);
+        }
+        
+        /* --- END OF NEW IMPLEMENTATION --- */
+
+        /* Main apology container: Now fully responsive */
+        .apology-container {
+            background-color: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%; /* Take full width on mobile */
+            max-width: 420px; /* Max width on larger screens */
             text-align: center;
-        }
-
-        /* Reusable style for content boxes within sections */
-        .content-box-style {
-            background-color: var(--color-card-bg);
-            border-radius: 0.75rem;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7),
-                        0 0 40px rgba(0, 200, 150, 0.15);
-            transition: all 0.3s ease-in-out;
-            transform: translateY(0);
-        }
-        .content-box-style:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8),
-                        0 0 50px rgba(0, 200, 150, 0.25);
-        }
-
-        /* Styles for project carousel within the Projects section */
-        .projects-carousel-container {
+            /* Responsive padding */
+            padding: 2rem 1.5rem;
             position: relative;
-            width: 100%;
-            max-width: 1200px; /* Max width for the carousel */
-            margin: 0 auto;
-            overflow: hidden; /* Hides projects outside the view */
-        }
-        .projects-carousel-track {
-            display: flex; /* Horizontal layout of tiles */
-            transition: transform 0.5s ease-in-out; /* Smooth sliding animation */
-            will-change: transform; /* Optimize for animation */
-        }
-        .project-tile {
-            flex-shrink: 0; /* Prevents tiles from shrinking */
-            width: 300px; /* Fixed width for each tile */
-            margin-right: 24px; /* Gap between tiles */
-            /* Add pointer cursor to indicate clickability */
-            cursor: pointer;
-        }
-
-        /* Responsive adjustments for project tiles within carousel */
-        @media (min-width: 768px) { /* md breakpoint */
-            .project-tile {
-                width: 350px;
-            }
-        }
-        @media (min-width: 1024px) { /* lg breakpoint */
-            .project-tile {
-                width: 380px;
-            }
-        }
-
-        /* Navigation buttons for project carousel */
-        .carousel-nav-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
             z-index: 10;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            line-height: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            transition: background-color 0.3s ease;
-        }
-        .carousel-nav-button:hover {
-            background-color: rgba(0, 0, 0, 0.7);
-        }
-        .carousel-nav-button.left {
-            left: 10px;
-        }
-        .carousel-nav-button.right {
-            right: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 1s forwards;
+            overflow: hidden;
+            
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23C30E59' fill-opacity='0.05' d='M10 2.75C6.5 2.75 3.5 5.5 3.5 9.25C3.5 14.5 10 19.5 10 19.5C10 19.5 16.5 14.5 16.5 9.25C16.5 5.5 13.5 2.75 10 2.75Z'/%3E%3C/svg%3E");
+            background-size: 25px 25px;
         }
 
-        /* Project Modal Styles (Netflix-like popup) */
-        .project-modal-overlay {
-            position: fixed;
+        /* More prominent gradient border */
+        .apology-container::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); /* Darker overlay */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000; /* Highest z-index to be on top */
-            opacity: 0;
-            visibility: hidden; /* Hidden by default */
-            transition: opacity 0.3s ease;
+            right: 0;
+            bottom: 0;
+            border-radius: 2rem;
+            padding: 4px; /* Thicker border */
+            background: linear-gradient(135deg, #E82561, #F2AE66, #C30E59);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: destination-out;
+            mask-composite: exclude;
+            z-index: 11;
         }
-        .project-modal-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
-        .project-modal-content {
-            background-color: var(--color-card-bg);
-            border-radius: 1rem; /* Rounded corners */
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 80px rgba(0, 200, 150, 0.3); /* Shadow and glow */
-            padding: 2rem;
-            max-width: 90%; /* Max width on smaller screens */
-            max-height: 90%; /* Max height on smaller screens */
-            overflow-y: auto; /* Allows scrolling within modal if content overflows */
+        
+        .card-content {
             position: relative;
-            transform: scale(0.8); /* Start smaller for entry animation */
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            display: flex; /* Flex container for two-column layout */
-            flex-direction: column; /* Default to column for small screens */
-            gap: 1.5rem; /* Space between image and text parts */
+            z-index: 12;
         }
 
-        /* Responsive adjustment for two-column layout in modal */
-        @media (min-width: 768px) {
-            .project-modal-content {
-                flex-direction: row; /* Horizontal layout on medium and larger screens */
-                max-width: 80%; /* Adjust max-width for larger screens */
-                max-height: 80%; /* Adjust max-height for larger screens */
+        @keyframes fadeInSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        .project-modal-overlay.open .project-modal-content {
-            transform: scale(1); /* Scale to full size on open */
-            opacity: 1;
-        }
-
-        /* Modal close button */
-        .project-modal-close-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--color-main-text);
-            font-size: 2rem;
+        
+        /* Responsive Heart Icon */
+        .heart-icon {
             cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 50%;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-        .project-modal-close-button:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--color-accent);
-        }
-        .project-modal-content img {
-            width: 100%; /* Image takes full width of its container */
-            height: auto;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Subtle shadow for modal image */
+            transition: transform 0.3s ease;
+            display: inline-block;
+            font-size: 3.5rem; /* Slightly smaller for mobile */
+            line-height: 1;
+            color: #C30E59;
+            user-select: none;
         }
 
-        /* New style to zoom out content by 25% for Skills section */
-        .content-zoom-out-75 {
-            transform: scale(0.75);
-            transform-origin: center center; /* Ensures it scales from the center */
-            transition: transform 0.3s ease-out; /* Smooth transition for the zoom itself */
-            display: flex; /* Make it a flex container */
-            flex-direction: column; /* Arrange children in a column */
-            align-items: center; /* Center children horizontally */
-            width: 100%; /* Take full width of its parent */
-            height: 100%; /* Take full height of its parent (important for vertical centering within slide) */
-            justify-content: center; /* Center content vertically within the zoomed area */
+        .heart-icon:hover { transform: scale(1.1); }
+        .heart-icon.clicked { animation: bounceScale 0.5s ease-out; }
+
+        @keyframes bounceScale { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+        .hidden-message {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-out, opacity 0.7s ease-out, padding-top 0.7s ease-out;
+            opacity: 0;
+            padding-top: 0;
         }
+
+        .hidden-message.revealed {
+            max-height: 500px;
+            opacity: 1;
+            padding-top: 1.5rem;
+        }
+
+        .button-primary, .button-secondary {
+            width: 100%; /* Make buttons full width on mobile */
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .button-primary {
+            background: linear-gradient(135deg, #E82561 0%, #C30E59 100%);
+            color: white;
+            box-shadow: 0 4px 10px rgba(195, 14, 89, 0.3);
+            border: none;
+        }
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(195, 14, 89, 0.4);
+        }
+        
+        .button-secondary {
+            background-color: transparent;
+            color: #C30E59;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 2px solid #E8E7AB;
+        }
+        .button-secondary:hover {
+            transform: translateY(-2px);
+            background-color: #E8E7AB;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .confetti-container, .message-box-backdrop, .message-box {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        .confetti-container { pointer-events: none; z-index: 20; }
+        .confetti { position: absolute; width: 10px; height: 10px; background-color: #F2AE66; opacity: 0; animation: confettiFall 3s forwards; border-radius: 50%; }
+        @keyframes confettiFall { 0% { opacity: 0; transform: translateY(-100px) rotate(0deg); } 10% { opacity: 1; } 100% { opacity: 0; transform: translateY(100vh) rotate(720deg); } }
+
+        .message-box-backdrop { background-color: rgba(0, 0, 0, 0.4); z-index: 999; display: none; }
+        .message-box {
+            top: 50%; left: 50%; width: 90%; max-width: 400px; height: auto;
+            transform: translate(-50%, -50%);
+            background-color: #fff; padding: 2rem; border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000; display: none;
+            animation: scaleIn 0.3s ease-out forwards;
+            text-align: center;
+        }
+        @keyframes scaleIn { from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
     </style>
 </head>
-<body class="antialiased">
-    <!-- Loader HTML (Displayed during page transitions) -->
-    <div class="loader">
-        <div class="bar1"></div>
-        <div class="bar2"></div>
-        <div class="bar3"></div>
-        <div class="bar4"></div>
-        <div class="bar5"></div>
-        <div class="bar6"></div>
+<body>
+
+    <!-- MORE VISIBLE Background flower SVGs -->
+    <div id="flower-vine-tl" class="background-flower">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><path d="M10 100 C 50 20, 150 20, 190 100 C 230 180, 330 180, 370 100" stroke="#C30E59" stroke-width="4" fill="none" /><circle cx="70" cy="60" r="20" fill="#E82561" opacity="0.9"/><circle cx="290" cy="140" r="22" fill="#F2AE66" opacity="0.9"/><path d="M50 80 Q60 95 75 80 L70 60 Z" fill="#E8E7AB"/><path d="M270 160 Q280 175 295 160 L290 140 Z" fill="#E8E7AB"/></svg>
+    </div>
+    <div id="flower-rose-br" class="background-flower">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="100" cy="100" r="80" fill="#E82561" opacity="0.9"/><circle cx="100" cy="100" r="60" fill="#C30E59" opacity="0.9"/><circle cx="100" cy="100" r="40" fill="#F2AE66" opacity="0.9"/><circle cx="100" cy="100" r="20" fill="#E8E7AB" opacity="0.9"/></svg>
     </div>
 
-    <!-- Elements for the screen transition overlay (Controlled by GSAP) -->
-    <div class="transition-cover-top"></div>
-    <div class="transition-cover-bottom"></div>
-
-    <!-- Navbar (Fixed at the top) -->
-    <header class="bg-[var(--color-secondary-bg)] shadow-md py-2 px-3 md:px-6 rounded-b-lg">
-        <nav class="container mx-auto flex justify-between items-center">
-            <!-- Portfolio Title (clickable to go to Home) -->
-            <a href="#" class="text-xl md:text-2xl font-extrabold text-[var(--color-accent)] p-0.5 rounded-lg transition-all duration-300 transform hover:scale-105 btn-glow border-2 border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-bg)]" data-section-index="0">AI/ML Portfolio</a>
-            
-            <!-- Desktop Navigation Links -->
-            <ul class="hidden md:flex space-x-2 items-center">
-                <li><a href="#hero" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="0">Home</a></li>
-                <li><a href="#about" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="1">About</a></li>
-                <li><a href="#skills" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="2">Skills</a></li>
-                <li><a href="#projects" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="3">Projects</a></li>
-                <!-- CTA Button for Contact -->
-                <li>
-                    <a href="#contact" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-0.5 px-2 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="4">Get in Touch</a>
-                </li>
-            </ul>
-            
-            <!-- Mobile Menu Button (Hamburger Icon) -->
-            <button id="mobile-menu-button" class="md:hidden text-[var(--color-main-text)] hover:text-[var(--color-accent)] focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
-                </svg>
-            </button>
-        </nav>
-        
-        <!-- Mobile Menu (Hidden by default, shown on button click) -->
-        <div id="mobile-menu" class="hidden md:hidden mt-4 bg-[var(--color-secondary-bg)] rounded-lg shadow-lg">
-            <ul class="flex flex-col items-center py-4 space-y-3">
-                <li><a href="#hero" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="0">Home</a></li>
-                <li><a href="#about" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="1">About</a></li>
-                <li><a href="#skills" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="2">Skills</a></li>
-                <li><a href="#projects" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="3">Projects</a></li>
-                <li>
-                    <a href="#contact" class="block w-full text-center py-2 px-4 bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow" data-section-index="4">Get in Touch</a>
-                </li>
-            </ul>
-        </div>
-    </header>
-
-    <main class="w-full h-full">
-        <!-- Hero Section -->
-        <section id="hero" class="slideshow-section hero-section-bg bg-gradient-to-r from-[var(--color-secondary-bg)] to-[var(--color-primary-bg)] text-white p-8 md:p-16 rounded-xl shadow-xl flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12">
-            <div class="flex-shrink-0 hero-animation-img z-10">
-                <img src="image.png" alt="Profile Picture" class="w-48 h-48 rounded-full border-4 border-[var(--color-accent)] shadow-lg object-cover">
-            </div>
-            <div class="text-center md:text-left z-10 content-box-style p-6 md:p-10">
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-3 leading-tight hero-animation-text text-[var(--color-accent)]">Hi, I'm Krishna Singh</h1>
-                <p class="text-xl md:text-2xl font-light mb-4 hero-animation-text text-[var(--color-main-text)]">An Aspiring AI/ML Student</p>
-                <p class="text-lg opacity-90 max-w-2xl mx-auto md:mx-0 hero-animation-text text-[var(--color-main-text)]">
-                    Driving innovation through intelligent systems. I'm Krishna Singh, an AI/ML student specializing in Machine Learning, Deep Learning, and Data Science. With a portfolio including impactful projects like 'Deep Earth Sentinel' for environmental sustainability and advanced predictive models for healthcare and customer behavior, I transform complex data into actionable insights to solve real-world challenges.
-                </p>
-                <div class="mt-8 flex justify-center md:justify-start space-x-4 hero-animation-buttons">
-                    <!-- Updated buttons to use goToSection function directly -->
-                    <a href="#" onclick="goToSection(3); return false;" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-opacity-80 transition-all duration-300 transform hover:scale-105 btn-glow">View Projects</a>
-                    <a href="#" onclick="goToSection(4); return false;" class="bg-transparent text-[var(--color-accent)] font-semibold py-3 px-6 rounded-lg border border-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-primary-bg)] transition-all duration-300 transform hover:scale-105 btn-glow">Get in Touch</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Me Section -->
-        <section id="about" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)]">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-8 fade-in-section">About Me</h2>
-            <div class="prose max-w-3xl mx-auto text-[var(--color-main-text)] leading-relaxed text-lg content-box-style p-6 md:p-10">
-                <p class="mb-4 fade-in-section">
-                    I am a dedicated AI/ML student with a strong foundation in mathematics, statistics, and programming. My journey in artificial intelligence began with a fascination for how machines can learn and adapt, leading me to explore various domains within the field.
-                </p>
-                <p class="mb-4 fade-in-section" style="transition-delay: 0.2s;">
-                    My academic pursuits have equipped me with hands-on experience in developing and deploying machine learning models, from traditional algorithms to advanced deep learning architectures. I am proficient in Python and comfortable with popular frameworks like TensorFlow, PyTorch, and scikit-learn.
-                </p>
-                <p class="fade-in-section" style="transition-delay: 0.3s;">
-                    I thrive on challenging problems and am constantly seeking opportunities to apply my knowledge to real-world scenarios, contribute to innovative projects, and grow as a machine learning engineer.
-                </p>
-            </div>
-        </section>
-
-        <!-- Skills Section -->
-        <section id="skills" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)]">
-            <!-- This container holds all visible skills content and applies the zoom effect -->
-            <div class="flex flex-col items-center w-full h-full content-zoom-out-75">
-                <!-- Heading container for left alignment and specific padding -->
-                <!-- The text-left and px-8 here control the horizontal alignment/padding of the heading itself -->
-                <div class="w-full text-left px-8">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[var(--color-accent)] mb-2 fade-in-section">Skills</h2>
-                </div>
-                <!-- Grid for skill cards, which will center itself with mx-auto -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto content-box-style">
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Programming Languages</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>Python</li>
-                            <li>R</li>
-                            <li>SQL</li>
-                        </ul>
-                    </div>
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.1s;">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">ML Frameworks & Libraries</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>TensorFlow</li>
-                            <li>PyTorch</li>
-                            <li>scikit-learn</li>
-                            <li>Pandas, NumPy</li>
-                        </ul>
-                    </div>
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.2s;">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">AI/ML Concepts</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>Machine Learning</li>
-                            <li>Deep Learning</li>
-                            <li>Natural Language Processing (NLP)</li>
-                            <li>Computer Vision</li>
-                        </ul>
-                    </div>
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.3s;">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Tools & Platforms</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>Jupyter Notebooks</li>
-                            <li>Google Colab</li>
-                            <li>Git, GitHub</li>
-                            <li>Docker (Basic)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.4s;">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Databases & Cloud</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>MongoDB</li>
-                            <li>PostgreSQL</li>
-                            <li>AWS (S3, EC2 - Basic)</li>
-                        </ul>
-                    </div>
-                    <div class="bg-[var(--color-card-bg)] p-6 rounded-lg shadow-lg card-hover-effect fade-in-section" style="transition-delay: 0.5s;">
-                        <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-2">Soft Skills</h3>
-                        <ul class="list-none space-y-1 text-[var(--color-main-text)]">
-                            <li>Problem Solving</li>
-                            <li>Critical Thinking</li>
-                            <li>Collaboration</li>
-                            <li>Communication</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Projects Section -->
-        <section id="projects" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)] relative">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-8 fade-in-section">Projects</h2>
-            <div class="projects-carousel-container content-box-style p-6 md:p-10">
-                <div class="projects-carousel-track" id="projects-carousel-track">
-                    <!-- Project 1 -->
-                    <div class="bg-[var(--color-card-bg)] rounded-lg shadow-lg card-hover-effect fade-in-section project-tile cursor-pointer"
-                         data-project-id="project1"
-                         data-project-img="Project1.png"
-                         data-project-title="🌎 Deep Earth Sentinel: AI-Powered Microplastic Pollution Source Identification"
-                         data-project-description="&quot;Deep Earth Sentinel&quot; is a deep learning-driven initiative aimed at combating microplastic pollution by accurately identifying the geographical origin of plastic bottle waste. This project develops and deploys a robust Artificial Intelligence model that predicts the scan_country (country of origin) of a plastic bottle based on its product attributes. By precisely pinpointing the source, environmental agencies and policymakers can implement targeted strategies to reduce plastic waste at its origin."
-                         data-project-tags="Python,TensorFlow,NLP"
-                         data-project-link="https://github.com/MrDunky14/Plastic-Source-Identification-using-DL">
-                        <img src="Project1.png" alt="Project 1 Image" class="w-full h-48 object-cover rounded-t-lg">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">🌎 Deep Earth Sentinel: AI-Powered Microplastic Pollution Source Identification</h3>
-                            <p class="text-[var(--color-main-text)] mb-4 text-sm">
-                                "Deep Earth Sentinel" is a deep learning-driven initiative aimed at combating microplastic pollution by accurately identifying the geographical origin of plastic bottle waste. This project develops and deploys a robust Artificial Intelligence model that predicts the scan_country (country of origin) of a plastic bottle based on its product attributes. By precisely pinpointing the source, environmental agencies and policymakers can implement targeted strategies to reduce plastic waste at its origin.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Python</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">TensorFlow</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">NLP</span>
-                            </div>
-                            <a href="https://github.com/MrDunky14/Plastic-Source-Identification-using-DL" target="_blank" class="text-[var(--color-accent)] hover:text-[var(--color-main-text)] font-medium transition-colors inline-flex items-center">
-                                View Project
-                                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-7h-3m0 0l-3-3m3 3V3"></path></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Project 2 -->
-                    <div class="bg-[var(--color-card-bg)] rounded-lg shadow-lg card-hover-effect fade-in-section project-tile cursor-pointer"
-                         data-project-id="project2"
-                         data-project-img="Project2.png"
-                         data-project-title="Human Disease Prediction Model"
-                         data-project-description="This project presents a robust machine learning model designed for the accurate prediction of human diseases based solely on patient-reported symptoms. Leveraging a comprehensive dataset, this model aims to provide a valuable tool for early diagnosis assistance, potentially streamlining the diagnostic process and improving patient outcomes in healthcare settings."
-                         data-project-tags="cuML,Model Interpretion,Machine Learning"
-                         data-project-link="https://github.com/MrDunky14/Human-Disease-Prediction-Model">
-                        <img src="Project2.png" alt="Project 2 Image" class="w-full h-48 object-cover rounded-t-lg">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">Human Disease Prediction Model</h3>
-                            <p class="text-[var(--color-main-text)] mb-4 text-sm">
-                                This project presents a robust machine learning model designed for the accurate prediction of human diseases based solely on patient-reported symptoms. Leveraging a comprehensive dataset, this model aims to provide a valuable tool for early diagnosis assistance, potentially streamlining the diagnostic process and improving patient outcomes in healthcare settings.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">cuML</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Model Interpretion</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Machine Learning</span>
-                            </div>
-                            <a href="https://github.com/MrDunky14/Human-Disease-Prediction-Model" target="_blank" class="text-[var(--color-accent)] hover:text-[var(--color-main-text)] font-medium transition-colors inline-flex items-center">
-                                View Project
-                                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-7h-3m0 0l-3-3m3 3V3"></path></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Project 3 -->
-                    <div class="bg-[var(--color-card-bg)] rounded-lg shadow-lg card-hover-effect fade-in-section project-tile cursor-pointer"
-                         data-project-id="project3"
-                         data-project-img="Project3.png"
-                         data-project-title="Predicting Customer Churn: An Advanced Machine Learning"
-                         data-project-description="This project presents a comprehensive analysis and predictive modeling solution for customer churn in a telecommunications context. Leveraging a detailed dataset, the primary objective is to accurately identify customers at high risk of churning, understand the underlying drivers of churn, and provide actionable business recommendations to enhance customer retention and maximize Customer Lifetime Value (CLTV)."
-                         data-project-tags="scikit-learn,Regression,Data Science"
-                         data-project-link="https://github.com/MrDunky14/Predicting-Customer-Churn-An-Advanced-Machine-Learning">
-                        <img src="Project3.png" alt="Project 3 Image" class="w-full h-48 object-cover rounded-t-lg">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">Predicting Customer Churn: An Advanced Machine Learning</h3>
-                            <p class="text-[var(--color-main-text)] mb-4 text-sm">
-                                This project presents a comprehensive analysis and predictive modeling solution for customer churn in a telecommunications context. Leveraging a detailed dataset, the primary objective is to accurately identify customers at high risk of churning, understand the underlying drivers of churn, and provide actionable business recommendations to enhance customer retention and maximize Customer Lifetime Value (CLTV).
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">scikit-learn</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Regression</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Data Science</span>
-                            </div>
-                            <a href="https://github.com/MrDunky14/Predicting-Customer-Churn-An-Advanced-Machine-Learning" target="_blank" class="text-[var(--color-accent)] hover:text-[var(--color-main-text)] font-medium transition-colors inline-flex items-center">
-                                View Project
-                                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-7h-3m0 0l-3-3m3 3V3"></path></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- New Project Tile -->
-                    <div class="bg-[var(--color-card-bg)] rounded-lg shadow-lg card-hover-effect fade-in-section project-tile cursor-pointer"
-                         data-project-id="project4"
-                         data-project-img="https://placehold.co/600x400/2C394B/00C896?text=Upcoming+Project"
-                         data-project-title="🚀 Upcoming Project: [Your Project Title Here]"
-                         data-project-description="This space is reserved for a new and exciting project currently under development! Stay tuned for more details on its innovative features and impact."
-                         data-project-tags="Coming Soon,AI/ML"
-                         data-project-link="#">
-                        <img src="https://placehold.co/600x400/2C394B/00C896?text=Upcoming+Project" alt="Upcoming Project Image" class="w-full h-48 object-cover rounded-t-lg">
-                        <div class="p-6">
-                            <h3 class="text-xl font-semibold text-[var(--color-accent)] mb-3">🚀 Upcoming Project: [Your Project Title Here]</h3>
-                            <p class="text-[var(--color-main-text)] mb-4 text-sm">
-                                This space is reserved for a new and exciting project currently under development! Stay tuned for more details on its innovative features and impact.
-                            </p>
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">Coming Soon</span>
-                                <span class="bg-[var(--color-secondary-bg)] text-[var(--color-accent)] text-xs font-semibold px-2.5 py-0.5 rounded-full">AI/ML</span>
-                            </div>
-                            <a href="#" class="text-[var(--color-accent)] hover:text-[var(--color-main-text)] font-medium transition-colors inline-flex items-center">
-                                Learn More (Placeholder)
-                                <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-7h-3m0 0l-3-3m3 3V3"></path></svg>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Carousel Navigation Buttons -->
-                <button class="carousel-nav-button left" id="prevProjectBtn">
-                    &lt;
-                </button>
-                <button class="carousel-nav-button right" id="nextProjectBtn">
-                    &gt;
-                </button>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="slideshow-section bg-[var(--color-secondary-bg)] p-8 md:p-12 rounded-xl shadow-xl border-2 border-[var(--color-accent)]">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[var(--color-accent)] mb-8 fade-in-section">Get in Touch</h2>
-            <p class="text-lg text-[var(--color-main-text)] mb-6 max-w-2xl mx-auto fade-in-section" style="transition-delay: 0.1s;">
-                I'm always open to new opportunities and collaborations. Feel free to reach out to me!
+    <!-- Main apology content container -->
+    <div class="apology-container">
+        <div class="card-content">
+            <!-- MOBILE FRIENDLY TYPOGRAPHY -->
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-4 tracking-tight">
+                I'm Truly Sorry Jaanuuu
+            </h1>
+            <p class="text-base sm:text-lg text-gray-600 mb-6">
+                There's something important I need to say...
             </p>
-            <div class="flex flex-col items-center space-y-4 fade-in-section content-box-style p-6 md:p-10">
-                <a href="mailto:krishnasingh8627@gmail.com" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-opacity-80 transition-colors transform hover:scale-105 inline-flex items-center">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    krishnasingh8627@gmail.com
-                </a>
-                <div class="flex space-x-6 mt-4">
-                    <!-- LinkedIn -->
-                    <a href="https://linkedin.com/in/yourprofile" target="_blank" class="text-[var(--color-main-text)] hover:text-[var(--color-accent)] transition-colors transform hover:scale-110">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                        </svg>
-                    </a>
-                    <!-- GitHub -->
-                    <a href="https://github.com/MrDunky14" target="_blank" class="text-[var(--color-main-text)] hover:text-[var(--color-accent)] transition-colors transform hover:scale-110">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path fill-rule="evenodd" d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.799 8.205 11.385.6.11.82-.26.82-.577v-2.247c-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.332-1.756-1.332-1.756-1.09-.744.082-.729.082-.729 1.205.085 1.838 1.237 1.838 1.237 1.07 1.83 2.807 1.3 3.491.993.109-.775.419-1.3.762-1.6C7.5 17.5 4.5 16.388 4.5 11.237c0-1.3.465-2.35 1.237-3.18-.124-.31-.536-1.507.118-3.149 0 0 1-.318 3.3-.657 1 0 2 0 3 0 .343.344.686.687 1.03.996C15.992 5.032 17 6.136 17 6.136c.654 1.642.242 2.839.118 3.149.772.83 1.237 1.88 1.237 3.18 0 5.16-3 6.262-8.5 6.55.45.388.82.915.82 1.846v2.753c0 .318.22.687.82.577C20.562 21.799 24 17.302 24 12c0-6.627-5.373-12-12-12z" clip-rule="evenodd" />
-                        </svg>
-                    </a>
-                    <!-- Add more social media links as needed (e.g., Twitter, Kaggle) -->
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <footer class="bg-[var(--color-secondary-bg)] text-[var(--color-main-text)] py-6 text-center rounded-t-xl shadow-lg">
-        <p>&copy; 2024 Krishna Singh. All rights reserved.</p>
-        <p class="mt-2 text-sm">Designed with Tailwind CSS</p>
-    </footer>
-
-    <!-- Project Details Modal -->
-    <div class="project-modal-overlay" id="projectModal">
-        <div class="project-modal-content">
-            <button class="project-modal-close-button" id="closeModalBtn">&times;</button>
-            <div class="w-full md:w-1/2 flex-shrink-0"> <!-- Image container -->
-                <img id="modalProjectImage" src="" alt="Project Image" class="w-full h-auto rounded-lg shadow-lg">
+            <div id="heartIcon" class="heart-icon mb-6">
+                &#10084;&#65039;
             </div>
-            <div class="w-full md:w-1/2 flex flex-col justify-between"> <!-- Text details container -->
-                <div>
-                    <h3 id="modalProjectTitle" class="text-3xl font-bold text-[var(--color-accent)] mb-3"></h3>
-                    <p id="modalProjectDescription" class="text-[var(--color-main-text)] text-base mb-4 leading-relaxed"></p>
-                    <div id="modalProjectTags" class="flex flex-wrap gap-2 mb-4"></div>
+
+            <div id="hiddenMessage" class="hidden-message text-gray-700 leading-relaxed text-base">
+                <p class="mb-4">
+                    I know I hurt you, and for that, my heart aches. It was never my intention, and I deeply regret my actions.
+                </p>
+                <p class="mb-4">
+                    Our connection means the world to me, and the thought of causing you pain is unbearable. I've reflected a lot, and I understand the impact of my words/actions.
+                </p>
+                <p>
+                    I hope you can find it in your heart to forgive me.
+                </p>
+                <!-- MOBILE FRIENDLY BUTTON LAYOUT -->
+                <div class="flex flex-col items-center mt-6 space-y-4">
+                    <button id="forgiveButton" class="button-primary hidden">
+                        Please Forgive Me
+                    </button>
+                    <button id="narazButton" class="button-secondary hidden">
+                        No, I'm Naraz
+                    </button>
                 </div>
-                <a id="modalProjectLink" href="#" target="_blank" class="bg-[var(--color-accent)] text-[var(--color-primary-bg)] font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-opacity-80 transition-colors inline-flex items-center self-start">
-                    View Project
-                    <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4m-4-7h-3m0 0l-3-3m3 3V3"></path></svg>
-                </a>
             </div>
         </div>
     </div>
 
+    <div id="confettiContainer" class="confetti-container"></div>
+    <div id="messageBoxBackdrop" class="message-box-backdrop"></div>
+    <div id="messageBox" class="message-box">
+        <p class="text-lg sm:text-xl font-semibold mb-4" id="messageBoxText"></p>
+        <button id="messageBoxClose" class="button-primary w-auto"> <!-- Auto width for popup button -->
+            Okay
+        </button>
+    </div>
 
     <script>
-        // Global variables for sections and state management
-        const sections = document.querySelectorAll('.slideshow-section');
-        let currentSectionIndex = 0;
-        let isThrottled = false; // Prevents rapid transitions
+        // JS Logic remains the same, as it was functioning correctly.
+        const heartIcon = document.getElementById('heartIcon');
+        const hiddenMessage = document.getElementById('hiddenMessage');
+        const forgiveButton = document.getElementById('forgiveButton');
+        const narazButton = document.getElementById('narazButton');
+        const confettiContainer = document.getElementById('confettiContainer');
+        const messageBox = document.getElementById('messageBox');
+        const messageBoxBackdrop = document.getElementById('messageBoxBackdrop');
+        const messageBoxText = document.getElementById('messageBoxText');
+        const messageBoxClose = document.getElementById('messageBoxClose');
 
-        // Variables for loader and transition covers (initialized on window.onload)
-        let loader;
-        let transitionCoverTop;
-        let transitionCoverBottom;
+        let messageRevealed = false;
+        const newPalette = ['#C30E59', '#E82561', '#F2AE66', '#E8E7AB'];
+        const narazApologyMessages = [
+            "Mai bohot sharminda hoon jo maine aapko takleef di. Mujhe apne kiye par sach mein afsos hai, aur aap par iska jo asar hua, uske liye bhi.",
+            "Mai samajhta hoon ke meri wajah se aapko bura laga, aur uske liye mai dil se maafi chahta hoon. Hamare rishtey ki qadar karta hoon aur waada karta hoon ke aage se behtar karunga.",
+            "Meri galti ki koi safai nahi hai, aur mai poori zimmedari leta hoon. Aapko pareshan karne ke liye sach mein maafi chahta hoon.",
+            "Maine jo kiya, uske baare mein bohot socha hai, aur mujhe ehsaas ho gaya hai ke mai galat tha. Apne dil ki gehraiyon se maafi maangta hoon.",
+            "Mere kaam laparwah the, aur aapko takleef dene ke liye mujhe bohot afsos hai. Kripya mujhe maaf kar dein.",
+            "Yeh jaan kar mera dil toot gaya ke maine aapko chot pahunchai. Mai sach mein maafi chahta hoon, aur cheezein theek karna chahta hoon.",
+            "Janta hoon ke sirf 'sorry' kehna kaafi nahi hai, par mai sach mein pachta raha hoon jo dard maine diya. Aapki maafi paane ke liye mai kya kar sakta hoon?",
+            "Aap mere liye bohot maayne rakhte hain, aur mai kabhi aapko hurt nahi karna chahta. Mai bohot-bohot maafi chahta hoon.",
+            "Maine galti ki, aur iska aap par jo asar hua, uske liye mai dil se maafi maangta hoon. Ummid karta hoon aap mujhe maaf kar payenge.",
+            "Mujhe apne shabdon/kaamo ka afsos hai, aur aapko nirash karne ke liye mai sach mein maafi chahta hoon. Mai isse seekhne aur yeh dobara na hone dene ke liye pratibaddh hoon."
+        ];
 
-        /**
-         * Animates content elements into view for the given section.
-         * Applies 'active-content' or 'is-visible' classes to trigger CSS transitions.
-         * @param {HTMLElement} section - The section element whose content needs to be animated.
-         */
-        function animateContentIn(section) {
-            if (section.id === 'hero') {
-                // Specific animations for Hero section elements
-                section.querySelector('.hero-animation-img')?.classList.add('active-content');
-                const heroContentBox = section.querySelector('.text-center.md\\:text-left.z-10.content-box-style');
-                if (heroContentBox) {
-                    heroContentBox.querySelectorAll('.hero-animation-text').forEach(el => el.classList.add('active-content'));
-                    heroContentBox.querySelectorAll('.hero-animation-buttons').forEach(el => el.classList.add('active-content'));
-                } else {
-                    // Fallback if content-box-style wrapper is not found (less likely)
-                    section.querySelectorAll('.hero-animation-text').forEach(el => el.classList.add('active-content'));
-                    section.querySelectorAll('.hero-animation-buttons').forEach(el => el.classList.add('active-content'));
-                }
+        function showMessageBox(message) {
+            messageBoxText.textContent = message;
+            messageBox.style.display = 'block';
+            messageBoxBackdrop.style.display = 'block';
+        }
+
+        function hideMessageBox() {
+            messageBox.style.display = 'none';
+            messageBoxBackdrop.style.display = 'none';
+        }
+
+        function resetPage() {
+            hiddenMessage.classList.remove('revealed');
+            forgiveButton.classList.add('hidden');
+            narazButton.classList.add('hidden');
+            messageRevealed = false;
+        }
+
+        messageBoxClose.addEventListener('click', hideMessageBox);
+        messageBoxBackdrop.addEventListener('click', hideMessageBox);
+
+        heartIcon.addEventListener('click', () => {
+            heartIcon.classList.add('clicked');
+            setTimeout(() => heartIcon.classList.remove('clicked'), 500);
+
+            if (!messageRevealed) {
+                hiddenMessage.classList.add('revealed');
+                forgiveButton.classList.remove('hidden');
+                narazButton.classList.remove('hidden');
+                messageRevealed = true;
             } else {
-                // General fade-in for other sections' content
-                section.querySelectorAll('.fade-in-section').forEach(el => {
-                    el.classList.add('is-visible');
-                });
-            }
-        }
-
-        /**
-         * Resets content animations for the given section by removing active classes.
-         * @param {HTMLElement} section - The section element whose content animations need to be reset.
-         */
-        function resetContentAnimations(section) {
-            if (section.id === 'hero') {
-                section.querySelector('.hero-animation-img')?.classList.remove('active-content');
-                const heroContentBox = section.querySelector('.text-center.md\\:text-left.z-10.content-box-style');
-                if (heroContentBox) {
-                    heroContentBox.querySelectorAll('.hero-animation-text.active-content').forEach(el => el.classList.remove('active-content'));
-                    heroContentBox.querySelectorAll('.hero-animation-buttons.active-content').forEach(el => el.classList.remove('active-content'));
-                } else {
-                    section.querySelectorAll('.hero-animation-text.active-content').forEach(el => el.classList.remove('active-content'));
-                    section.querySelectorAll('.hero-animation-buttons.active-content').forEach(el => el.classList.remove('active-content'));
-                }
-            } else {
-                section.querySelectorAll('.fade-in-section.is-visible').forEach(el => {
-                    el.classList.remove('is-visible');
-                });
-            }
-        }
-
-        /**
-         * Controls the vertical sliding transition between portfolio sections using GSAP.
-         * Implements a screen wipe effect with a loader.
-         * @param {number} newIndex - The index of the section to navigate to.
-         */
-        function goToSection(newIndex) {
-            // Prevent multiple transitions from firing simultaneously
-            if (isThrottled) return;
-
-            const prevSection = sections[currentSectionIndex];
-            let targetIndex = newIndex;
-
-            // Loop navigation if newIndex goes out of bounds
-            if (newIndex < 0) {
-                targetIndex = sections.length - 1;
-            } else if (newIndex >= sections.length) {
-                targetIndex = 0;
-            }
-
-            // If attempting to navigate to the current section, do nothing
-            if (targetIndex === currentSectionIndex) return;
-
-            isThrottled = true; // Engage throttling
-
-            const newSection = sections[targetIndex];
-
-            // Reset content animations on the outgoing section immediately
-            if (prevSection) {
-                resetContentAnimations(prevSection);
-            }
-
-            // Create a GSAP timeline for sequencing animations
-            const tl = new TimelineMax({
-                onComplete: () => {
-                    isThrottled = false; // Release throttling when animation completes
-
-                    // Ensure previous section is fully hidden and reset its styles
-                    if (prevSection) {
-                        prevSection.classList.remove('active');
-                        prevSection.style.visibility = 'hidden';
-                        prevSection.style.opacity = '0';
-                        prevSection.style.transition = 'none'; // Disable CSS transitions after GSAP
-                        prevSection.style.transform = 'translateY(0) rotateX(0deg)'; // Reset transform
-                    }
-
-                    // Ensure new section is fully active and ready for content animations
-                    newSection.style.transition = 'opacity 0.8s ease-in-out'; // Re-enable CSS transition
-                    setTimeout(() => {
-                        animateContentIn(newSection); // Trigger content specific animations
-                    }, 50); // Small delay for content animations to run after section is fully active
-                }
-            });
-
-            // Phase 1: Screen Close (Transition covers slide in)
-            tl.to(transitionCoverTop, 0.2, {top: '50%', ease: Power2.easeOut, onStart: () => {
-                // Make covers visible and opaque before they start moving
-                transitionCoverTop.style.visibility = 'visible';
-                transitionCoverBottom.style.visibility = 'visible';
-                transitionCoverTop.style.opacity = '1';
-                transitionCoverBottom.style.opacity = '1';
-
-                // Immediately hide the previous section as covers come down
-                if (prevSection) {
-                    prevSection.classList.remove('active');
-                    prevSection.style.visibility = 'hidden';
-                    prevSection.style.opacity = '0';
-                    prevSection.style.transition = 'none'; // Disable CSS transition for GSAP control
-                    prevSection.style.transform = 'translateY(0) rotateX(0deg)'; // Reset transform
-                }
-            }}, 'close')
-            .to(transitionCoverBottom, 0.2, {bottom: '50%', ease: Power2.easeOut}, 'close')
-
-            // Phase 2: Loader Fade In & Prepare new section (under cover)
-            .to(loader, 0.2, {opacity: 1, visibility: 'visible'}, '+=0.1') // Loader appears
-            .call(() => {
-                // Immediately set the new section to active, visible, and in its final position,
-                // but still hidden by the covers. This ensures content is ready when covers recede.
-                newSection.classList.add('active');
-                newSection.style.visibility = 'visible';
-                newSection.style.opacity = '1';
-                newSection.style.transition = 'none'; // Disable CSS transition for GSAP control
-                newSection.style.transform = 'translateY(0) rotateX(0deg)'; // Snap to final position
-            }, null, null, '+=0.1') // Runs after loader starts fading in
-
-            // Phase 3: Screen Open & Loader Fade Out (New section content is revealed)
-            tl.to(transitionCoverTop, 0.2, {top: '0%', ease: Power2.easeOut}, '+=0.5') // Covers slide back up
-            .to(transitionCoverBottom, 0.2, {bottom: '0%', ease: Power2.easeOut}, '-=0.2') // Covers slide back down
-            .to(loader, 0.2, {opacity: 0, visibility: 'hidden'}, '-=0.2'); // Loader fades out
-
-            currentSectionIndex = targetIndex; // Update current section index
-            updateNavDots(); // Update navigation dots visual state
-        }
-
-
-        // Event Listeners for Keyboard Navigation (Arrow Up/Down)
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowDown') {
-                goToSection(currentSectionIndex + 1);
-            } else if (e.key === 'ArrowUp') {
-                goToSection(currentSectionIndex - 1);
+                showMessageBox("Thank you for listening. I genuinely hope you'll consider my apology.");
             }
         });
 
-        // Event Listeners for Mouse Wheel/Trackpad Scrolling
-        document.addEventListener('wheel', (e) => {
-            if (e.deltaY > 0) { // Scrolling down
-                goToSection(currentSectionIndex + 1);
-            } else { // Scrolling up
-                goToSection(currentSectionIndex - 1);
+        forgiveButton.addEventListener('click', () => {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = `${Math.random() * -20}%`;
+                confetti.style.backgroundColor = newPalette[Math.floor(Math.random() * newPalette.length)];
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.animationDuration = `${2 + Math.random() * 1}s`;
+                confettiContainer.appendChild(confetti);
+                confetti.addEventListener('animationend', () => confetti.remove());
             }
+
+            showMessageBox("Your forgiveness would mean the world to me. Thank you for your time.");
+            const resetAfterForgive = () => { hideMessageBox(); resetPage(); };
+            messageBoxClose.onclick = resetAfterForgive;
+            messageBoxBackdrop.onclick = resetAfterForgive;
         });
 
-        // Mobile menu toggle functionality
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-            mobileMenu.classList.toggle('flex');
+        narazButton.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * narazApologyMessages.length);
+            showMessageBox(narazApologyMessages[randomIndex]);
+            const resetAfterNaraz = () => { hideMessageBox(); resetPage(); };
+            messageBoxClose.onclick = resetAfterNaraz;
+            messageBoxBackdrop.onclick = resetAfterNaraz;
         });
-
-        // Navigation dots creation and functionality
-        const navDotsContainer = document.createElement('div');
-        navDotsContainer.classList.add('nav-dots');
-        document.body.appendChild(navDotsContainer);
-
-        sections.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.classList.add('nav-dot');
-            dot.setAttribute('data-section-index', index);
-            dot.addEventListener('click', () => {
-                goToSection(index); // Navigate to section on dot click
-            });
-            navDotsContainer.appendChild(dot);
+        
+        heartIcon.addEventListener('mouseleave', () => {
+            heartIcon.classList.remove('clicked');
         });
-
-        /**
-         * Updates the active state of navigation dots based on the current section.
-         */
-        function updateNavDots() {
-            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
-                if (index === currentSectionIndex) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
-                }
-            });
-        }
-
-        // Add event listeners for desktop navigation links
-        document.querySelectorAll('header nav ul li a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault(); // Prevent default hash behavior
-                const index = parseInt(this.getAttribute('data-section-index'));
-                goToSection(index); // Navigate to section on link click
-            });
-        });
-
-        // Update mobile menu links to directly navigate sections and close menu
-        document.querySelectorAll('#mobile-menu a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const index = parseInt(this.getAttribute('data-section-index'));
-                goToSection(index); // Navigate to section
-                // Close mobile menu after clicking a link
-                document.getElementById('mobile-menu').classList.add('hidden');
-                document.getElementById('mobile-menu').classList.remove('flex');
-            });
-        });
-
-        // Project Carousel Logic within the Projects section
-        let projectCarouselTrack;
-        let projectTiles;
-        let currentProjectIndex = 0;
-        let projectsPerPage = 1; // Default for smaller screens, adjusted responsively
-
-        /**
-         * Calculates how many project tiles can fit on the screen based on current viewport width.
-         */
-        function updateProjectsPerPage() {
-            if (!projectTiles || projectTiles.length === 0) return;
-
-            const containerWidth = projectCarouselTrack.parentElement.clientWidth;
-            // Calculate actual tile width including margins for accurate measurement
-            const tileStyle = getComputedStyle(projectTiles[0]);
-            const tileWidth = projectTiles[0].offsetWidth +
-                             parseFloat(tileStyle.marginRight) +
-                             parseFloat(tileStyle.marginLeft);
-
-            projectsPerPage = Math.floor(containerWidth / tileWidth);
-            if (projectsPerPage === 0) projectsPerPage = 1; // Ensure at least one project is always shown
-
-            // Adjust currentProjectIndex to stay within valid bounds after resize
-            currentProjectIndex = Math.max(0, Math.min(currentProjectIndex, projectTiles.length - projectsPerPage));
-        }
-
-        /**
-         * Slides the project carousel to display a specific set of projects.
-         * @param {number} index - The starting index of the project to display.
-         */
-        function showProjects(index) {
-            // Ensure index is within valid range
-            currentProjectIndex = Math.max(0, Math.min(index, projectTiles.length - projectsPerPage));
-            
-            // Recalculate tile width with margin for precise offset
-            const tileStyle = getComputedStyle(projectTiles[0]);
-            const tileWidthWithMargin = projectTiles[0].offsetWidth +
-                                        parseFloat(tileStyle.marginRight) +
-                                        parseFloat(tileStyle.marginLeft);
-            const offset = -currentProjectIndex * tileWidthWithMargin;
-            
-            // Animate carousel track using GSAP
-            TweenMax.to(projectCarouselTrack, 0.5, { x: offset, ease: Power2.easeOut });
-        }
-
-        // Initialize project carousel on DOM content loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            projectCarouselTrack = document.getElementById('projects-carousel-track');
-            projectTiles = document.querySelectorAll('.project-tile');
-
-            if (projectCarouselTrack && projectTiles.length > 0) {
-                updateProjectsPerPage(); // Initial calculation
-                showProjects(0); // Show first set of projects
-
-                // Use ResizeObserver for responsive carousel recalculations
-                const resizeObserver = new ResizeObserver(() => {
-                    updateProjectsPerPage();
-                    showProjects(currentProjectIndex); // Re-position carousel based on new size
-                });
-                resizeObserver.observe(projectCarouselTrack.parentElement); // Observe the carousel container
-
-                // Event listeners for carousel navigation buttons
-                document.getElementById('nextProjectBtn').addEventListener('click', () => {
-                    showProjects(currentProjectIndex + projectsPerPage);
-                });
-                document.getElementById('prevProjectBtn').addEventListener('click', () => {
-                    showProjects(currentProjectIndex - projectsPerPage);
-                });
-            }
-        });
-
-        // Project Modal Handling (for displaying full project details)
-        const projectModal = document.getElementById('projectModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalProjectImage = document.getElementById('modalProjectImage');
-        const modalProjectTitle = document.getElementById('modalProjectTitle');
-        const modalProjectDescription = document.getElementById('modalProjectDescription');
-        const modalProjectTags = document.getElementById('modalProjectTags');
-        const modalProjectLink = document.getElementById('modalProjectLink');
-
-        // Add click listener to each project tile to open the modal
-        document.querySelectorAll('.project-tile').forEach(tile => {
-            tile.addEventListener('click', function(event) {
-                // Prevent modal from opening if a link INSIDE the tile is clicked
-                if (event.target.tagName === 'A' || event.target.closest('a')) {
-                    return;
-                }
-                // Populate modal content from data attributes on the tile
-                modalProjectImage.src = this.dataset.projectImg;
-                modalProjectTitle.textContent = this.dataset.projectTitle;
-                modalProjectDescription.textContent = this.dataset.projectDescription;
-
-                // Clear existing tags and add new ones
-                modalProjectTags.innerHTML = '';
-                this.dataset.projectTags.split(',').forEach(tagText => {
-                    const span = document.createElement('span');
-                    span.classList.add('bg-[var(--color-secondary-bg)]', 'text-[var(--color-accent)]', 'text-xs', 'font-semibold', 'px-2.5', 'py-0.5', 'rounded-full');
-                    span.textContent = tagText.trim();
-                    modalProjectTags.appendChild(span);
-                });
-                modalProjectLink.href = this.dataset.projectLink;
-
-                projectModal.classList.add('open'); // Open the modal
-                document.body.classList.add('no-scroll'); // Disable body scrolling
-            });
-        });
-
-        // Close modal when close button is clicked
-        closeModalBtn.addEventListener('click', () => {
-            projectModal.classList.remove('open'); // Close the modal
-            document.body.classList.remove('no-scroll'); // Re-enable body scrolling
-        });
-
-        // Close modal when clicking outside the content area (on the overlay)
-        projectModal.addEventListener('click', (event) => {
-            if (event.target === projectModal) { // Check if the click was directly on the overlay
-                projectModal.classList.remove('open');
-                document.body.classList.remove('no-scroll');
-            }
-        });
-
-        // Close modal on Escape key press
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && projectModal.classList.contains('open')) {
-                projectModal.classList.remove('open');
-                document.body.classList.remove('no-scroll');
-            }
-        });
-
-
-        /**
-         * Initializes the portfolio on window load.
-         * Sets initial section visibility, animates hero content, and updates nav dots.
-         */
-        window.onload = () => {
-            // Initialize global variables for loader and transition covers
-            loader = document.querySelector('.loader'); // Corrected to use vanilla JS querySelector
-            transitionCoverTop = document.querySelector('.transition-cover-top');
-            transitionCoverBottom = document.querySelector('.transition-cover-bottom');
-
-            // Ensure all sections are initially hidden and reset for GSAP control
-            sections.forEach(section => {
-                section.style.visibility = 'hidden';
-                section.style.opacity = '0';
-                section.style.transform = 'translateY(0) rotateX(0deg)'; // Set to final state for GSAP
-                section.style.transition = 'none'; // Disable CSS transition to avoid conflicts with GSAP
-            });
-
-            // Make the first section (Hero) active and visible instantly on load
-            currentSectionIndex = 0;
-            sections[0].classList.add('active');
-            sections[0].style.visibility = 'visible';
-            sections[0].style.opacity = '1';
-            sections[0].style.transform = 'translateY(0) rotateX(0deg)';
-            
-            // Trigger content animations for the initial Hero section
-            animateContentIn(sections[0]);
-
-            // Update navigation dots to reflect the active section
-            updateNavDots();
-
-            // Re-enable CSS transition for the first section after initial load,
-            // so subsequent opacity transitions work correctly outside of GSAP's control.
-            setTimeout(() => {
-                sections[0].style.transition = 'opacity 0.8s ease-in-out';
-            }, 100);
-        };
     </script>
 </body>
 </html>
